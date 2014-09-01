@@ -26,6 +26,8 @@ class Block:
         self._type = "corner"
         if x == 0 or y == 0 or z == 0:
             self._type = "side"
+        if abs(x) + abs(y) + abs(z) == 1:
+            self._type = "centre" 
 
     def is_recover(self):
         if self._x == self._tx and self._y == self._ty and self._z == self._tz and \
@@ -41,11 +43,35 @@ class Block:
     def get_z(self):
         return self._z
         
+    def get_tx(self):
+        return self._tx
+
+    def get_ty(self):
+        return self._ty
+
+    def get_tz(self):
+        return self._tz
+ 
+    def get_i(self):
+        return self._i
+
+    def get_j(self):
+        return self._j
+
     def get_k(self):
         return self._k
         
-    def get_h(self):
-        return math.floor(math.sqrt((self._x-self._tx)*(self._x-self._tx)+(self._y-self._ty)*(self._y-self._ty)+(self._z-self._tz)*(self._z-self._tz)))
+    def get_ti(self):
+        return self._ti
+
+    def get_tj(self):
+        return self._tj
+
+    def get_tk(self):
+        return self._tk
+        
+    def get_type(self):
+        return self._type
 
     def get_name(self):
         return self._name
@@ -58,8 +84,27 @@ class Block:
         if self._k == face:
             return self._kc
         return "N"
+        
+    def get_iorj_color(self): 
+        if self._ic <> "N":
+            return self._ic
+        if self._jc <> "N":
+            return self._jc
+        return "N"
+ 
+        
+    def get_face(self, color): 
+        if self._ic == color:
+            return "i"
+        if self._jc == color:
+            return "j"
+        if self._kc == color:
+            return "k"
+        return "n"
 
     def do_trans(self, face):
+        if face[0] == "A":
+            return True
         if face == "F" and self._x == 1:
             return True
         if face == "B" and self._x == -1:
@@ -78,17 +123,25 @@ class Block:
         return False
 
     def right_hand_process(self, face):
-        if face == "F" or face == "B":
+        if face == "F" or face == "B" or face == "AF":
             self._j, self._k = self._k, self._j
             self._jc, self._kc = self._kc, self._jc
             
-        if face == "R" or face == "L":
+        if face == "R" or face == "L" or face == "AR":
             self._i, self._k = self._k, self._i
             self._ic, self._kc = self._kc, self._ic
             
-        if face == "U" or face == "D":
+        if face == "U" or face == "D" or face == "AU":
             self._i, self._j = self._j, self._i
             self._ic, self._jc = self._jc, self._ic
+
+        if face[0] == "A":
+            if face[1] == "F":
+                self._tj, self._tk = self._tk, self._tj
+            if face[1] == "R":
+                self._ti, self._tk = self._tk, self._ti
+            if face[1] == "U":
+                self._ti, self._tj = self._tj, self._ti
 
 
     def turn_transform(self, face, _trans_matrix):
@@ -104,6 +157,17 @@ class Block:
             self._x = pos_matrix[0][0] * x + pos_matrix[0][1] * y + pos_matrix[0][2] * z;
             self._y = pos_matrix[1][0] * x + pos_matrix[1][1] * y + pos_matrix[1][2] * z;
             self._z = pos_matrix[2][0] * x + pos_matrix[2][1] * y + pos_matrix[2][2] * z;
+
+            #target pos transform
+            if face[0] == "A": 
+                tx = self._tx
+                ty = self._ty
+                tz = self._tz
+            
+                self._tx = pos_matrix[0][0] * tx + pos_matrix[0][1] * ty + pos_matrix[0][2] * tz;
+                self._ty = pos_matrix[1][0] * tx + pos_matrix[1][1] * ty + pos_matrix[1][2] * tz;
+                self._tz = pos_matrix[2][0] * tx + pos_matrix[2][1] * ty + pos_matrix[2][2] * tz;
+
 
             #ori transform
             i = self._i
@@ -128,12 +192,45 @@ class Block:
             self._j = (ori_matrix[1][0] * i + ori_matrix[1][1] * j + ori_matrix[1][2] * k) * jFlag;
             self._k = (ori_matrix[2][0] * i + ori_matrix[2][1] * j + ori_matrix[2][2] * k) * kFlag;
 
+            if face[0] == "A": 
+                #ori transform
+                ti = self._ti
+                tj = self._tj
+                tk = self._tk
+
+                #mirror process
+                tiFlag = 1
+                tjFlag = 1
+                tkFlag = 1
+                if ti < 0 :
+                    ti = ti * -1
+                    tiFlag = -1
+                if tj < 0 :
+                    tj = tj * -1
+                    tjFlag = -1
+                if tk < 0 :
+                    tk = tk * -1
+                    tkFlag = -1
+
+                self._ti = (ori_matrix[0][0] * ti + ori_matrix[0][1] * tj + ori_matrix[0][2] * tk) * tiFlag;
+                self._tj = (ori_matrix[1][0] * ti + ori_matrix[1][1] * tj + ori_matrix[1][2] * tk) * tjFlag;
+                self._tk = (ori_matrix[2][0] * ti + ori_matrix[2][1] * tj + ori_matrix[2][2] * tk) * tkFlag;
+
+
             #right hand process
             self.right_hand_process(face) 
 
 class MagicCube:
     def __init__(self, cross_cube = False):
         self._block = []
+
+        #add centre
+        self._block.append(Block("RNN", "R", "N", "N", 1, 0, 0, 1, 2, 3))
+        self._block.append(Block("ONN", "O", "N", "N", -1, 0, 0, -1, 2, 3))
+        self._block.append(Block("NGN", "N", "G", "N", 0, 1, 0, 1, 2, 3))
+        self._block.append(Block("NBN", "N", "B", "N", 0, -1, 0, 1, -2, 3))
+        self._block.append(Block("NNY", "N", "N", "Y", 0, 0, 1, 1, 2, 3))
+        self._block.append(Block("NNW", "N", "N", "W", 0, 0, -1, 1, 2, -3))
 
         #add corner
         self._block.append(Block("RGY", "R", "G", "Y", 1, 1, 1, 1, 2, 3))
@@ -197,6 +294,12 @@ class MagicCube:
     def get_block_list(self):
         return self._block
 
+    def get_centre_block(self, color):
+        for b in self._block:
+            if b.get_type() == "centre" and color in b.get_name():
+                return b
+        return ""
+
     def gen_display_matrix(self):
         #get face F
         for b in self._block:
@@ -244,7 +347,7 @@ class MagicCube:
         self.print_face("B")
 
     def turn(self, action):
-        start = time.clock()
+        #start = time.clock()
         face = ""
         axis = ""
         if action == "F":
@@ -294,11 +397,21 @@ class MagicCube:
         if action == "D":
             face = "D"
             axis = "-z"
- 
+
+        if action == "y":
+            face = "AU"
+            axis = "z"
+       
+        if action == "y'":
+            face = "AU"
+            axis = "-z"
+
+        #print face, axis
         for b in self._block:
             b.turn_transform(face, self._trans_matrix[axis])
             
-        self.turn_time = self.turn_time + (time.clock() - start) 
+        #self.turn_time = self.turn_time + (time.clock() - start) 
+ 
  
 class CubeOperator:
     def __init__(self, cube):
@@ -306,10 +419,19 @@ class CubeOperator:
 
     def execute_formula(self, formula):
         print "formula :", formula
-        for f in formula.split(' '):
-            if f[0] == "2":
-                self._cube.turn(f[1])
-                self._cube.turn(f[1])
+        for f in formula:
+            if len(f) == 2 and f[1] == "2":
+                self._cube.turn(f[0])
+                self._cube.turn(f[0])
+            else:
+                self._cube.turn(f)
+ 
+    def execute_formula_by_string(self, formula_string):
+        print "formula :", formula_string
+        for f in formula_string.split(' '):
+            if len(f) == 2 and f[1] == "2":
+                self._cube.turn(f[0])
+                self._cube.turn(f[0])
             else:
                 self._cube.turn(f)
                 
@@ -322,12 +444,42 @@ class CubeResolver:
         self._formula_stack = []
         self.cut_count = 0
         self._resolver_condition = {}
-        self._resolver_condition["first_cross"] = ["RNW", "ONW", "NGW", "NBW"]
+        self._resolver_condition["first_cross"] = ["RNW"]
+        self._resolver_condition["secend_cross"] = ["RNW", "ONW"]
+        self._resolver_condition["third_cross"] = ["RNW", "ONW", "NGW"]
+        self._resolver_condition["fouth_cross"] = ["RNW", "ONW", "NGW", "NBW"]
+        self._resolver_condition["1st_corner"] = ["RGW", "OGW", "RBW", "OBW"]
+        self._resolver_condition["2st_side"] = ["RGN", "OGN", "RBN", "OBN"]
 
+    def execute_formula(self, formula):
+        #print "formula :", formula
+        for f in formula:
+            if len(f) == 2 and f[1] == "2":
+                self._cube.turn(f[0])
+                self._cube.turn(f[0])
+            else:
+                self._cube.turn(f)
+ 
+    def execute_formula_by_string(self, formula_string):
+        #print "formula :", formula_string
+        for f in formula_string.split(' '):
+            if len(f) == 2 and f[1] == "2":
+                self._cube.turn(f[0])
+                self._cube.turn(f[0])
+            else:
+                self._cube.turn(f)
+ 
     def resolver_done(self, step = "all"):
         for b in self._cube.get_block_list():
-            if step == "all" or b.get_name() in self._resolver_condition[step] and not b.is_recover() :
-                return False
+            if step == "all":
+                if not b.is_recover():
+                    return False
+            else:
+                if b.get_name() in self._resolver_condition[step] and not b.is_recover() :
+                    if step == "1st_corner":
+                        #print b.get_name()
+                        print b.get_name(), b.get_i(), b.get_j(), b.get_k(), b.get_ti(), b.get_tj(), b.get_tk()
+                    return False
         return True
 
     def can_not_move(self, formula, step):
@@ -350,7 +502,7 @@ class CubeResolver:
     def depth_first_search(self, depth, max_depth, step):
        
         if self.resolver_done(step):
-            print "resolver done"
+            #print "resolver done"
             return True
             
         #cut branch 1
@@ -390,35 +542,223 @@ class CubeResolver:
         return False
     
     def resolver_all(self):
-        pass 
+        pass
+    
+
+    def resolver_1st_corner(self):
+        while not self.resolver_done("1st_corner"):
+            #find
+            formula_set = ["U", "U'", "U2"]
+            formula_unti_set = ["U'", "U", "U2"]
+            
+            axis_formula_set = ["y", "y'", "y2"]
+            axis_formula_unti_set = ["y'", "y", "y2"]
+            find_in_3st = False
+            block = ""
+            #set
+            set_formula = []
+ 
+            #find at 3st layer 
+            for b in self._cube.get_block_list():
+                if b.get_type() == "corner" and b.get_z() == 1 and 'W' in b.get_name():
+                    find_in_3st = True
+                    block = b
+                    break
+                    #print b.get_name(), b.get_x(), b.get_y(), b.get_z(), block.get_tx(), block.get_ty(), block.get_tz()
+            if not find_in_3st:
+                for b in self._cube.get_block_list():
+                    if b.get_type() == "corner" and b.get_z() == -1 and 'W' in b.get_name() and not b.is_recover():
+                        block = b
+                        break 
+                        
+                #set axis y ori
+                for i in range(len(axis_formula_set)):
+                    self.execute_formula_by_string(axis_formula_set[i])
+                    #print block.get_name(), block.get_x(), block.get_y(), block.get_z(), block.get_tx(), block.get_ty(), block.get_tz()
+                    if block.get_x() == 1 and block.get_y() == 1:
+                        set_formula.append(axis_formula_set[i])
+                        break
+                    self.execute_formula_by_string(axis_formula_unti_set[i])
+            
+                set_formula.append("R")
+                set_formula.append("U")
+                set_formula.append("R'")
+                self.execute_formula(["R", "U", "R'"])    
+
+         
+            #set axis y ori
+            for i in range(len(axis_formula_set)):
+                self.execute_formula_by_string(axis_formula_set[i])
+                #print block.get_name(), block.get_x(), block.get_y(), block.get_z(), block.get_tx(), block.get_ty(), block.get_tz()
+                if block.get_tx() == 1 and block.get_ty() == 1:
+                    set_formula.append(axis_formula_set[i])
+                    break
+                self.execute_formula_by_string(axis_formula_unti_set[i])
+
+            #set 3st pos
+            for i in range(len(formula_set)):
+                self.execute_formula_by_string(formula_set[i])
+                #print block.get_name(), block.get_x(), block.get_y(), block.get_z(), block.get_tx(), block.get_ty(), block.get_tz()
+                if block.get_x() == block.get_tx() and block.get_y() == block.get_ty():
+                    set_formula.append(formula_set[i])
+                    break
+                self.execute_formula_by_string(formula_unti_set[i])
+
+            print "corner block: ", block.get_name(), " set formula: ", set_formula
+
+            #execute
+            exe_formula = []
+            face = block.get_face("W")
+            if face == "i":
+                exe_formula = ["U", "R", "U'", "R'"]
+
+            if face == "j":
+                exe_formula = ["R", "U", "R'"]
+
+            if face == "k":
+                exe_formula = ["R", "U2", "R'", "U'", "R", "U", "R'"]
+                
+            self.execute_formula(exe_formula)
+            print "execute: ", exe_formula
+
+            #set
+            #if cnt == 4:
+                #break
+
+            #excute
+
+    def resolver_2st_side(self):
+        while not self.resolver_done("2st_side"):
+            #find
+            formula_set = ["U", "U'", "U2"]
+            formula_unti_set = ["U'", "U", "U2"]
+            
+            axis_formula_set = ["y", "y'", "y2"]
+            axis_formula_unti_set = ["y'", "y", "y2"]
+            find_in_3st = False
+            block = ""
+            #set
+            set_formula = []
+ 
+            #find at 3st layer 
+            for b in self._cube.get_block_list():
+                if b.get_type() == "side" and b.get_z() == 1 and 'Y' not in b.get_name():
+                    find_in_3st = True
+                    block = b
+                    break
+                    #print b.get_name(), b.get_x(), b.get_y(), b.get_z(), block.get_tx(), block.get_ty(), block.get_tz()
+            if not find_in_3st:
+                for b in self._cube.get_block_list():
+                    if b.get_type() == "side" and b.get_z() == 0 and 'Y' not in b.get_name() and not b.is_recover():
+                        block = b
+                        break 
+                        
+                #set axis y ori
+                for i in range(len(axis_formula_set)):
+                    self.execute_formula_by_string(axis_formula_set[i])
+                    #print block.get_name(), block.get_x(), block.get_y(), block.get_z(), block.get_tx(), block.get_ty(), block.get_tz()
+                    if block.get_x() == 1 and block.get_y() == 1:
+                        set_formula.append(axis_formula_set[i])
+                        break
+                    self.execute_formula_by_string(axis_formula_unti_set[i])
+            
+                set_formula.append("U R U' R' U' F' U F")
+                self.execute_formula_by_string("U R U' R' U' F' U F")    
+
+         
+            #set axis y ori
+            iorj_color = block.get_iorj_color()
+            target_centre_block = self._cube.get_centre_block(iorj_color)
+            
+            for i in range(len(axis_formula_set)):
+                self.execute_formula_by_string(axis_formula_set[i])
+                #print block.get_name(), block.get_x(), block.get_y(), block.get_z(), block.get_tx(), block.get_ty(), block.get_tz()
+                if target_centre_block.get_x() == 1:
+                    set_formula.append(axis_formula_set[i])
+                    break
+                self.execute_formula_by_string(axis_formula_unti_set[i])
+
+            #set 3st pos
+            for i in range(len(formula_set)):
+                self.execute_formula_by_string(formula_set[i])
+                #print block.get_name(), block.get_x(), block.get_y(), block.get_z(), block.get_tx(), block.get_ty(), block.get_tz()
+                if block.get_x() == 1:
+                    set_formula.append(formula_set[i])
+                    break
+                self.execute_formula_by_string(formula_unti_set[i])
+
+            print "side block: ", block.get_name(), " set formula: ", set_formula
+
+            #execute
+            exe_formula = []
+            ty = block.get_ty()
+            if ty == -1:
+                exe_formula = "U' L' U L U F U' F'"
+
+            if ty == 1:
+                exe_formula = "U R U' R' U' F' U F"
+
+                
+            self.execute_formula_by_string(exe_formula)
+            print "execute: ", exe_formula
+
+            #set
+            #if cnt == 4:
+                #break
+
+            #excute
+
+
 
     def resolver_step(self, step):
+        if step == "1st_corner":
+            self.resolver_1st_corner()
+            return
+        
+        if step == "2st_side":
+            self.resolver_2st_side()
+            return
+
         self._formula_stack = []
 
         for max_depth in range(1, 8):
-            print "max_depth: ", max_depth
+            #print "max_depth: ", max_depth
             if self.depth_first_search(0, max_depth, step):
                 break;
    
-        print "turn time: ", self._cube.turn_time
+        #print "turn time: ", self._cube.turn_time
         return self._formula_stack 
     
 if __name__ == "__main__":
     magic_cube = MagicCube()
-
     cubeOpt = CubeOperator(magic_cube)
-    cubeOpt.execute_formula("D R F' D 2L U R' 2D L'")
-    
+    #cubeOpt.execute_formula_by_string("y y")
+    cubeOpt.execute_formula_by_string("D R F' D L2 U R' D2 L'")
+
+
+    #create a cube who has bottom side block only
     magic_cube_cross = copy.deepcopy(magic_cube)
     magic_cube_cross.to_cross_cube()
-    
+   
+    #step 1, 1st layer side
+    print "=====step 1, 1st layer side====="
     cubeRsl = CubeResolver(magic_cube_cross)
-    start = time.clock()
-    print cubeRsl.resolver_step("first_cross")
-    elapsed = (time.clock() - start)
+    #start = time.clock()
+    cubeOpt.execute_formula(cubeRsl.resolver_step("first_cross"))
+    cubeOpt.execute_formula(cubeRsl.resolver_step("secend_cross"))
+    cubeOpt.execute_formula(cubeRsl.resolver_step("third_cross"))
+    cubeOpt.execute_formula(cubeRsl.resolver_step("fouth_cross"))
+    
+    cubeRsl = CubeResolver(magic_cube)
+    #step 2, 1st layer corner
+    print "=====step 2, 1st layer corner====="
+    cubeRsl.resolver_step("1st_corner")
 
+    #step 3, 2st layer side
+    print "=====step 3, 2st layer side====="
+    cubeRsl.resolver_step("2st_side")
 
-    #magic_cube.print_cube()
+    #elapsed = (time.clock() - start)
+    magic_cube.print_cube()
 
-
-    print "title time: ", elapsed
+    #print "title time: ", elapsed
