@@ -95,11 +95,11 @@ class Block:
         
     def get_face(self, color): 
         if self._ic == color:
-            return "i"
+            return self._i
         if self._jc == color:
-            return "j"
+            return self._j
         if self._kc == color:
-            return "k"
+            return self._k
         return "n"
 
     def do_trans(self, face):
@@ -406,6 +406,14 @@ class MagicCube:
             face = "AU"
             axis = "-z"
 
+        if action == "x":
+            face = "AR"
+            axis = "y"
+       
+        if action == "x'":
+            face = "AR"
+            axis = "-y"
+
         #print face, axis
         for b in self._block:
             b.turn_transform(face, self._trans_matrix[axis])
@@ -470,15 +478,13 @@ class CubeResolver:
                 self._cube.turn(f)
  
     def resolver_done(self, step = "all"):
+            
         for b in self._cube.get_block_list():
             if step == "all":
                 if not b.is_recover():
                     return False
             else:
                 if b.get_name() in self._resolver_condition[step] and not b.is_recover() :
-                    if step == "1st_corner":
-                        #print b.get_name()
-                        print b.get_name(), b.get_i(), b.get_j(), b.get_k(), b.get_ti(), b.get_tj(), b.get_tk()
                     return False
         return True
 
@@ -609,13 +615,13 @@ class CubeResolver:
             #execute
             exe_formula = []
             face = block.get_face("W")
-            if face == "i":
+            if face == 1:
                 exe_formula = ["U", "R", "U'", "R'"]
 
-            if face == "j":
+            if face == 2:
                 exe_formula = ["R", "U", "R'"]
 
-            if face == "k":
+            if face == 3:
                 exe_formula = ["R", "U2", "R'", "U'", "R", "U", "R'"]
                 
             self.execute_formula(exe_formula)
@@ -709,7 +715,240 @@ class CubeResolver:
             #excute
 
 
+    def resolver_3st_side_color(self):
+        while True:
+            block_list = []
+            for b in self._cube.get_block_list():
+                if b.get_z() == 1 and b.get_type() == "side" and  b.get_face("Y") == 3:
+                    block_list.append(b)
 
+            if len(block_list) == 4:
+                break
+
+               
+            if len(block_list) == 2:
+                if block_list[0].get_y() == 0 and block_list[0].get_y() == 0:
+                    print "set: y"
+                    self._cube.turn("y")
+                if block_list[0].get_x() + block_list[0].get_y() + block_list[1].get_x() + block_list[1].get_y() == -2:
+                    print "set: y2"
+                    self._cube.turn("y")
+                    self._cube.turn("y")
+                if block_list[0].get_x() + block_list[0].get_y() + block_list[1].get_x() + block_list[1].get_y() == 0:
+                    for b in block_list:
+                        if b.get_y() == 0:
+                            if b.get_x() == -1:
+                                print "set: y"
+                                self._cube.turn("y")
+                            if b.get_x() == 1:
+                                print "set: y'"
+                                self._cube.turn("y'")
+
+            exe_formula = "F R U R' U' F'"
+            self.execute_formula_by_string(exe_formula)
+            print "execute: ", exe_formula
+ 
+    def resolver_3st_corner_color(self):
+        while True:
+            ok_block_list = []
+            not_ok_block_list = []
+            for b in self._cube.get_block_list():
+                if b.get_z() == 1 and b.get_type() == "corner":
+                    if b.get_face("Y") == 3:
+                        ok_block_list.append(b)
+                    else:
+                        not_ok_block_list.append(b)
+
+            if len(ok_block_list) == 4:
+                break
+            
+            #find
+            formula_set = ["U", "U'", "U2"]
+            formula_unti_set = ["U'", "U", "U2"]
+            
+            axis_formula_set = ["y", "y'", "y2"]
+            axis_formula_unti_set = ["y'", "y", "y2"]
+
+            set_formula = []
+               
+            if len(ok_block_list) == 1:
+                #set axis y ori
+                for i in range(len(axis_formula_set)):
+                    self.execute_formula_by_string(axis_formula_set[i])
+                    if ok_block_list[0].get_x() == 1 and ok_block_list[0].get_y() == -1:
+                        set_formula.append(axis_formula_set[i])
+                        break
+                    self.execute_formula_by_string(axis_formula_unti_set[i])
+
+            if len(ok_block_list) == 2:
+                if not_ok_block_list[0].get_face("Y") == not_ok_block_list[1].get_face("Y"):
+                    #set axis y ori
+                    for i in range(len(axis_formula_set)):
+                        self.execute_formula_by_string(axis_formula_set[i])
+                        if not_ok_block_list[0].get_face("Y") == 1:
+                            set_formula.append(axis_formula_set[i])
+                            break
+                        self.execute_formula_by_string(axis_formula_unti_set[i])
+
+                if not_ok_block_list[0].get_face("Y") == -1 * not_ok_block_list[1].get_face("Y"):
+                    #set axis y ori
+                    for i in range(len(axis_formula_set)):
+                        self.execute_formula_by_string(axis_formula_set[i])
+                        if abs(not_ok_block_list[0].get_face("Y")) == 1 and not_ok_block_list[0].get_y() == -1:
+                            set_formula.append(axis_formula_set[i])
+                            break
+                        self.execute_formula_by_string(axis_formula_unti_set[i])
+
+                if abs(not_ok_block_list[0].get_face("Y")) <> abs(not_ok_block_list[1].get_face("Y")):
+                    #set axis y ori
+                    for i in range(len(axis_formula_set)):
+                        self.execute_formula_by_string(axis_formula_set[i])
+                        if not_ok_block_list[0].get_face("Y") + not_ok_block_list[1].get_face("Y") == 3:
+                            set_formula.append(axis_formula_set[i])
+                            break
+                        self.execute_formula_by_string(axis_formula_unti_set[i])
+                        
+            if len(ok_block_list) == 0:
+                tmp_var = not_ok_block_list[0].get_face("Y") + not_ok_block_list[1].get_face("Y") + \
+                not_ok_block_list[2].get_face("Y") + not_ok_block_list[3].get_face("Y")
+                
+                if tmp_var == 0:
+                    if abs(not_ok_block_list[0].get_face("Y")) == 1:
+                        self.execute_formula_by_string("y")
+                        set_formula.append("y")
+                else:
+                    #get two same face block
+                    cur_face = tmp_var / 2 
+                    if cur_face == 1:
+                        self.execute_formula_by_string("y")
+                        set_formula.append("y")
+                    
+                    if cur_face == 2:
+                        self.execute_formula_by_string("y2")
+                        set_formula.append("y2")
+                
+                    if cur_face == -1:
+                        self.execute_formula_by_string("y'")
+                        set_formula.append("y'")
+
+            print "set formula: ", set_formula
+
+            exe_formula = "R U R' U R U2 R'"
+            self.execute_formula_by_string(exe_formula)
+            print "execute: ", exe_formula
+
+    def resolver_3st_corner_pos(self):
+        while True:
+            block_list = []
+
+            is_recover_count = 0;
+            is_recover_b = ""
+            is_recover_color = ""
+            #find
+            #corner ["RGY", "RBY", "OGY", "OBY"]
+            if self._cube.find_block_by_name("RGY").get_face("R") == self._cube.find_block_by_name("RBY").get_face("R"):
+                is_recover_count = is_recover_count + 1
+                is_recover_b = self._cube.find_block_by_name("RGY")
+                is_recover_color = "R"
+
+            if self._cube.find_block_by_name("RGY").get_face("G") == self._cube.find_block_by_name("OGY").get_face("G"):
+                is_recover_count = is_recover_count + 1
+                is_recover_b = self._cube.find_block_by_name("RGY")
+                is_recover_color = "G"
+ 
+            if self._cube.find_block_by_name("RBY").get_face("B") == self._cube.find_block_by_name("OBY").get_face("B"):
+                is_recover_count = is_recover_count + 1
+                is_recover_b = self._cube.find_block_by_name("RBY")
+                is_recover_color = "B"
+ 
+            if self._cube.find_block_by_name("OGY").get_face("O") == self._cube.find_block_by_name("OBY").get_face("O"):
+                is_recover_count = is_recover_count + 1
+                is_recover_b = self._cube.find_block_by_name("OGY")
+                is_recover_color = "O"
+ 
+            formula_set = ["U", "U'", "U2"]
+            formula_unti_set = ["U'", "U", "U2"]
+            
+            axis_formula_set = ["y", "y'", "y2"]
+            axis_formula_unti_set = ["y'", "y", "y2"]
+
+            set_formula = [] 
+ 
+            #adjust
+            if is_recover_count == 4:
+                for i in range(len(formula_set)):
+                    self.execute_formula_by_string(formula_set[i])
+                    #print block.get_name(), block.get_x(), block.get_y(), block.get_z(), block.get_tx(), block.get_ty(), block.get_tz()
+                    if self._cube.find_block_by_name("RGY").is_recover():
+                        print "adjust: ", formula_set[i]
+                        break
+                    self.execute_formula_by_string(formula_unti_set[i])
+                break 
+
+            #set 
+            if is_recover_count == 1:
+                for i in range(len(formula_set)):
+                    self.execute_formula_by_string(formula_set[i])
+                    if is_recover_b.get_face(is_recover_color) == 2:
+                        set_formula.append(formula_set[i])
+                        break
+                    self.execute_formula_by_string(formula_unti_set[i])
+
+            #set 
+            self.execute_formula_by_string("x'")
+            set_formula.append("x'")
+            print "set fromula: ", set_formula
+
+            #execute
+            exe_formula = "R2 D2 R' U' R D2 R' U R'"
+            self.execute_formula_by_string(exe_formula)
+            print "execute: ", exe_formula
+ 
+            #unti-set
+            self.execute_formula_by_string("x")
+            print "unti-set fromula: x"
+
+    def resolver_3st_side_pos(self):
+        while True:
+            block_list = []
+
+            is_recover_count = 0;
+            is_recover_b = ""
+
+            #find
+            for b in self._cube.get_block_list():
+                if b.get_z() == 1 and b.get_type() == "side" and b.is_recover():
+                    is_recover_count = is_recover_count + 1
+                    is_recover_b = b
+
+
+            set_formula = [] 
+
+            #set
+            if is_recover_count == 4:
+                break
+
+            if is_recover_count == 1:
+                if is_recover_b.get_x() == 1:
+                    self.execute_formula_by_string("y2")
+                    set_formula.append("y2")
+                    
+                if is_recover_b.get_x() == 0 and is_recover_b.get_y() == -1:
+                    self.execute_formula_by_string("y")
+                    set_formula.append("y")
+                    
+                if is_recover_b.get_x() == 0 and is_recover_b.get_y() == 1:
+                    self.execute_formula_by_string("y'")
+                    set_formula.append("y'")
+
+            print "set formula: ", set_formula 
+
+            #execute 
+            exe_formula = "R U' R U R U R U' R' U' R2"
+            self.execute_formula_by_string(exe_formula)
+            print "execute: ", exe_formula
+ 
+ 
     def resolver_step(self, step):
         if step == "1st_corner":
             self.resolver_1st_corner()
@@ -718,6 +957,23 @@ class CubeResolver:
         if step == "2st_side":
             self.resolver_2st_side()
             return
+
+        if step == "3st_side_color":
+            self.resolver_3st_side_color()
+            return
+
+        if step == "3st_corner_color":
+            self.resolver_3st_corner_color()
+            return
+            
+        if step == "3st_corner_pos":
+            self.resolver_3st_corner_pos()
+            return
+
+        if step == "3st_side_pos":
+            self.resolver_3st_side_pos()
+            return
+
 
         self._formula_stack = []
 
@@ -732,8 +988,8 @@ class CubeResolver:
 if __name__ == "__main__":
     magic_cube = MagicCube()
     cubeOpt = CubeOperator(magic_cube)
-    #cubeOpt.execute_formula_by_string("y y")
-    cubeOpt.execute_formula_by_string("D R F' D L2 U R' D2 L'")
+    #cubeOpt.execute_formula_by_string("R U R' U R U2 R' R U R' U R U2 R'")
+    cubeOpt.execute_formula_by_string("D R' F2 D' L U R' D L' U'")
 
 
     #create a cube who has bottom side block only
@@ -757,6 +1013,23 @@ if __name__ == "__main__":
     #step 3, 2st layer side
     print "=====step 3, 2st layer side====="
     cubeRsl.resolver_step("2st_side")
+
+    #step 4, 3st layer side color
+    print "=====step 4, 3st layer side color====="
+    cubeRsl.resolver_step("3st_side_color")
+
+    #step 5, 3st layer corner color
+    print "=====step 5, 3st layer corner color====="
+    cubeRsl.resolver_step("3st_corner_color")
+    
+    #step 6, 3st layer corner pos
+    print "=====step 6, 3st layer corner pos====="
+    cubeRsl.resolver_step("3st_corner_pos")
+
+    #step 7, 3st layer side pos
+    print "=====step 6, 3st layer side pos====="
+    cubeRsl.resolver_step("3st_side_pos")
+
 
     #elapsed = (time.clock() - start)
     magic_cube.print_cube()
