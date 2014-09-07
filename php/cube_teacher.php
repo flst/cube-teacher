@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <!-- saved from url=(0119)http://media.smashingmagazine.com/cdn_smash/wp-content/uploads/uploader/images/css3-designs/css3-rubiks-cube/index.html -->
 <html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-        <title>层先法教学助手（beta版），让你20分钟无成本学会魔方</title>
+        <title>层先法教学助手（beta版），20分钟无成本学会魔方复原</title>
         <link rel="stylesheet" href="./index_files/stylesheet.css" type="text/css">
         <!--[if IE]>
             <link rel="stylesheet" href="css/ie.css" type="text/css" />
@@ -18,6 +18,9 @@ class Block {
     var $_ic;
     var $_jc;
     var $_kc;
+    var $_tic;
+    var $_tjc;
+    var $_tkc;
     var $_x;
     var $_y;
     var $_z;
@@ -37,6 +40,9 @@ class Block {
         $this->_ic = $ic;
         $this->_jc = $jc;
         $this->_kc = $kc;
+        $this->_tic = $ic;
+        $this->_tjc = $jc;
+        $this->_tkc = $kc;
         $this->_x = $x;
         $this->_y = $y;
         $this->_z = $z;
@@ -58,8 +64,11 @@ class Block {
 
     function is_recover() {
         if ($this->_x == $this->_tx && $this->_y == $this->_ty && $this->_z == $this->_tz && 
-        $this->_i == $this->_ti && $this->_j == $this->_tj && $this->_k == $this->_tk)
-            return true;
+        $this->_ic == $this->_tic && $this->_jc == $this->_tjc && $this->_kc == $this->_tkc) {
+            if (($this->_ic == "N" or $this->_i == $this->_ti) && ($this->_jc == "N" or $this->_j == $this->_tj) && ($this->_kc == "N" or $this->_k == $this->_tk)) {
+                    return true;
+            }
+        }
         return false;
     }
         
@@ -109,7 +118,31 @@ class Block {
     }
 
     function get_tk() {
-        return $this_tk;
+        return $this->_tk;
+    }
+
+    function get_tic() {
+        return $this->_tic;
+    }
+
+    function get_tjc() {
+        return $this->_tjc;
+    }
+
+    function get_tkc() {
+        return $this->_tkc;
+    }
+
+    function get_ic() {
+        return $this->_ic;
+    }
+
+    function get_jc() {
+        return $this->_jc;
+    }
+
+    function get_kc() {
+        return $this->_kc;
     }
         
     function get_type() {
@@ -132,6 +165,52 @@ class Block {
         if ($this->_k == $face)
             return $this->_kc;
         return "N";
+    }
+
+    function set_target($target_block) {
+        $this->_tx = $target_block->get_tx();
+        $this->_ty = $target_block->get_ty();
+        $this->_tz = $target_block->get_tz();
+
+        $this->_ti = $target_block->get_ti();
+        $this->_tj = $target_block->get_tj();
+        $this->_tk = $target_block->get_tk();
+
+        $this->_tic = $target_block->get_tic();
+        $this->_tjc = $target_block->get_tjc();
+        $this->_tkc = $target_block->get_tkc();
+    }
+
+    function gen_name() {
+        #gen name
+        $color_pos = array("R"=>0,"O"=>0,"G"=>1,"B"=>1,"W"=>2,"Y"=>2);
+        if ($this->_ic != "N")
+            $this->_name[$color_pos[$this->_ic]] = $this->_ic;
+        if ($this->_jc != "N")
+            $this->_name[$color_pos[$this->_jc]] = $this->_jc;
+        if ($this->_kc != "N")
+            $this->_name[$color_pos[$this->_kc]] = $this->_kc;
+
+        #gen disp name
+        $color_chinese = array("R"=>"红","O"=>"橙","G"=>"绿","B"=>"蓝","W"=>"白","Y"=>"黄");
+
+        for($i=0; $i<3; $i++) {
+            if ($this->_name[$i] != "N")
+            $this->_disp_name = $this->_disp_name.$color_chinese[$this->_name[$i]];
+        }
+    }
+
+    function set_color($face, $color) { 
+        $c = strtoupper($color[0]);
+        if ($this->_i == $face) {
+            $this->_ic = $c;
+        }
+        if ($this->_j == $face) {
+            $this->_jc = $c;
+        }
+        if ($this->_k == $face) {
+            $this->_kc = $c;
+        }
     }
         
     function get_iorj_color() { 
@@ -191,12 +270,18 @@ class Block {
         }
 
         if ($face[0] == "A") {
-            if ($face[1] == "F")
+            if ($face[1] == "F") {
                 list($this->_tj,$this->_tk)=array($this->_tk,$this->_tj);
-            if ($face[1] == "R")
+                list($this->_tjc,$this->_tkc)=array($this->_tkc,$this->_tjc);
+            }
+            if ($face[1] == "R") {
                 list($this->_ti,$this->_tk)=array($this->_tk,$this->_ti);
-            if ($face[1] == "U")
+                list($this->_tic,$this->_tkc)=array($this->_tkc,$this->_tic);
+            }
+            if ($face[1] == "U") {
                 list($this->_ti,$this->_tj)=array($this->_tj,$this->_ti);
+                list($this->_tic,$this->_tjc)=array($this->_tjc,$this->_tic);
+            }
         }
     }
 
@@ -343,6 +428,125 @@ class MagicCube {
         $this->_trans_matrix["-x"] = array("pos"=>array(array(1,0,0),array(0,0,-1),array(0,1,0)), "ori"=>array(array(1,0,0),array(0,0,1),array(0,-1,0)));
         $this->_trans_matrix["-y"] = array("pos"=>array(array(0,0,1),array(0,1,0),array(-1,0,0)), "ori"=>array(array(0,0,-1),array(0,1,0),array(1,0,0)));
         $this->_trans_matrix["-z"] = array("pos"=>array(array(0,-1,0),array(1,0,0),array(0,0,1)), "ori"=>array(array(0,1,0),array(-1,0,0),array(0,0,1)));
+    }
+
+    function set_cube_color($block_color) {
+        $color_map = array();
+        $color_map[0] = array(1, -1, 1, 3);
+        $color_map[1] = array(0, -1, 1, 3);
+        $color_map[2] = array(-1, -1, 1, 3);
+        $color_map[3] = array(1, 0, 1, 3);
+        $color_map[4] = array(0, 0, 1, 3);
+        $color_map[5] = array(-1, 0, 1, 3);
+        $color_map[6] = array(1, 1, 1, 3);
+        $color_map[7] = array(0, 1, 1, 3);
+        $color_map[8] = array(-1, 1, 1, 3);
+
+        $color_map[9] = array(1, -1, 1, 1);
+        $color_map[10] = array(1, 0, 1, 1);
+        $color_map[11] = array(1, 1, 1, 1);
+        $color_map[12] = array(1, -1, 0, 1);
+        $color_map[13] = array(1, 0, 0, 1);
+        $color_map[14] = array(1, 1, 0, 1);
+        $color_map[15] = array(1, -1, -1, 1);
+        $color_map[16] = array(1, 0, -1, 1);
+        $color_map[17] = array(1, 1, -1, 1);
+
+        $color_map[18] = array(1, 1, 1, 2);
+        $color_map[19] = array(0, 1, 1, 2);
+        $color_map[20] = array(-1, 1, 1, 2);
+        $color_map[21] = array(1, 1, 0, 2);
+        $color_map[22] = array(0, 1, 0, 2);
+        $color_map[23] = array(-1, 1, 0, 2);
+        $color_map[24] = array(1, 1, -1, 2);
+        $color_map[25] = array(0, 1, -1, 2);
+        $color_map[26] = array(-1, 1, -1, 2);
+
+        $color_map[27] = array(1, -1, -1, -3);
+        $color_map[28] = array(1, 0, -1, -3);
+        $color_map[29] = array(1, 1, -1, -3);
+        $color_map[30] = array(0, -1, -1, -3);
+        $color_map[31] = array(0, 0, -1, -3);
+        $color_map[32] = array(0, 1, -1,-3);
+        $color_map[33] = array(-1, -1, -1, -3);
+        $color_map[34] = array(-1, 0, -1, -3);
+        $color_map[35] = array(-1, 1, -1, -3);
+
+        $color_map[36] = array(1, -1, -1, -2);
+        $color_map[37] = array(0, -1, -1, -2);
+        $color_map[38] = array(-1, -1, -1, -2);
+        $color_map[39] = array(1, -1, 0, -2);
+        $color_map[40] = array(0, -1, 0, -2);
+        $color_map[41] = array(-1, -1, 0, -2);
+        $color_map[42] = array(1, -1, 1, -2);
+        $color_map[43] = array(0, -1, 1, -2);
+        $color_map[44] = array(-1, -1, 1, -2);
+
+        $color_map[45] = array(-1, -1, -1, -1);
+        $color_map[46] = array(-1, 0, -1, -1);
+        $color_map[47] = array(-1, 1, -1, -1);
+        $color_map[48] = array(-1, -1, 0, -1);
+        $color_map[49] = array(-1, 0, 0, -1);
+        $color_map[50] = array(-1, 1, 0, -1);
+        $color_map[51] = array(-1, -1, 1, -1);
+        $color_map[52] = array(-1, 0, 1, -1);
+        $color_map[53] = array(-1, 1, 1, -1);
+
+        //add centre
+        $tmp_block = array();
+        $tmp_block[] = new Block("NNN", "", "N", "N", "N", 1, 0, 0, 1, 2, 3);
+        $tmp_block[] = new Block("NNN", "", "N", "N", "N", -1, 0, 0, -1, 2, 3);
+        $tmp_block[] = new Block("NNN", "", "N", "N", "N", 0, 1, 0, 1, 2, 3);
+        $tmp_block[] = new Block("NNN", "", "N", "N", "N", 0, -1, 0, 1, -2, 3);
+        $tmp_block[] = new Block("NNN", "", "N", "N", "N", 0, 0, 1, 1, 2, 3);
+        $tmp_block[] = new Block("NNN", "", "N", "N", "N", 0, 0, -1, 1, 2, -3);
+
+        //add corner
+        $tmp_block[] = new Block("NNN", "", "N", "N", "N", 1, 1, 1, 1, 2, 3);
+        $tmp_block[] = new Block("NNN", "", "N", "N", "N", -1, 1, 1, -1, 2, 3);
+        $tmp_block[] = new Block("NNN", "", "N", "N", "N", 1, -1, 1, 1, -2, 3);
+        $tmp_block[] = new Block("NNN", "", "N", "N", "N", -1, -1, 1, -1, -2, 3);
+        $tmp_block[] = new Block("NNN", "", "N", "N", "N", 1, 1, -1, 1, 2, -3);
+        $tmp_block[] = new Block("NNN", "", "N", "N", "N", -1, 1, -1, -1, 2, -3);
+        $tmp_block[] = new Block("NNN", "", "N", "N", "N", 1, -1, -1, 1, -2, -3);
+        $tmp_block[] = new Block("NNN", "", "N", "N", "N", -1, -1, -1, -1, -2, -3);
+        //add side
+        $tmp_block[] = new Block("NNN", "", "N", "N", "N", 0, 1, 1, 1, 2, 3);
+        $tmp_block[] = new Block("NNN", "", "N", "N", "N", 0, -1, 1, 1, -2, 3);
+        $tmp_block[] = new Block("NNN", "", "N", "N", "N", 0, 1, -1, 1, 2, -3);
+        $tmp_block[] = new Block("NNN", "", "N", "N", "N", 0, -1, -1, 1, -2, -3);
+        
+        $tmp_block[] = new Block("NNN", "", "N", "N", "N", 1, 0, 1, 1, 2, 3);
+        $tmp_block[] = new Block("NNN", "", "N", "N", "N", -1, 0, 1, -1, 2, 3);
+        $tmp_block[] = new Block("NNN", "", "N", "N", "N", 1, 0, -1, 1, 2, -3);
+        $tmp_block[] = new Block("NNN", "", "N", "N", "N", -1, 0, -1, -1, 2, -3);
+
+        $tmp_block[] = new Block("NNN", "", "N", "N", "N", 1, 1, 0, 1, 2, 3);
+        $tmp_block[] = new Block("NNN", "", "N", "N", "N", -1, 1, 0, -1, 2, 3);
+        $tmp_block[] = new Block("NNN", "", "N", "N", "N", 1, -1, 0, 1, -2, 3);
+        $tmp_block[] = new Block("NNN", "", "N", "N", "N", -1, -1, 0, -1, -2, 3);
+
+        #set color
+        for($i=0; $i<54; $i++) {
+            foreach($tmp_block as $b) {
+                if ($b->get_x() == $color_map[$i][0] && 
+                    $b->get_y() == $color_map[$i][1] &&
+                    $b->get_z() == $color_map[$i][2]) {
+                    $b->set_color($color_map[$i][3], $block_color[$i]);
+                }
+            }
+        }
+
+        #set name, then get target position and color face
+        foreach($tmp_block as $b) {
+            $b->gen_name();
+            //echo $b->get_name()." ";
+            $tb = $this->find_block_by_name($b->get_name());
+            $b->set_target($tb);
+            //echo $b->get_tic()." ".$b->get_tjc()." ".$b->get_tkc()." ".$b->get_tx()." ".$b->get_ty()." ".$b->get_tz()." ".$b->get_ti()." ".$b->get_tj()." ".$b->get_tk()."<br>";
+        }
+
+        $this->_block = $tmp_block;
     }
 
     function to_cross_cube() {
@@ -929,7 +1133,7 @@ class CubeResolver {
                             $set_formula = $set_formula.$axis_formula_set[$i]." ";
                             break;
                         }
-                        $this->execute_formula_by_string($axis_formula_unti_set[i]);
+                        $this->execute_formula_by_string($axis_formula_unti_set[$i]);
                     }
                 }
             }
@@ -1146,10 +1350,20 @@ class CubeResolver {
     }
 }
 
-$disr_formula = "D R' F2 D' L U R' D";
-if (isset($_POST["formula"]))
-    $disr_formula = trim($_POST["formula"]);
+$magic_cube = new MagicCube();
+$cube_opt = new CubeOperator($magic_cube);
 
+$disr_formula = "D R' F2 D' L U R' D";
+if (isset($_POST["formula"])) {
+    $disr_formula = str_replace("\\","",trim($_POST["formula"]));
+}
+
+if (isset($_POST["block"])) {
+    $block_color = $_POST["block"];
+    //print_r($block_color);
+    $magic_cube->set_cube_color($block_color);
+}
+else{
 ?>
 魔方教学助手beta版<br><br>
 该工具用途是超低成本的让初学者学会使用层先法复原魔方，当前beta版还会升级，后续升级会有：<br>
@@ -1164,12 +1378,12 @@ if (isset($_POST["formula"]))
 <hr>
 
 <?php
-
-$magic_cube = new MagicCube();
-$cube_opt = new CubeOperator($magic_cube);
 echo "开始打乱魔方：";
 $cube_opt->execute_formula_by_string($disr_formula);
 echo "<br>";
+}
+//echo "<br>";
+//$magic_cube->print_cube();
 echo "<br>开始还原魔方，共7大步，请耐心还原，第一次预计20分钟完成复原<br>";
 
 //create a cube who has bottom side block only
@@ -1211,7 +1425,7 @@ echo "<br>=====第七步，还原顶层棱块位置=====<br>";
 $cube_rsl->resolver_step("3st_side_pos");
 
 //elapsed = (time.clock() - start)
-//$magic_cube->print_cube();
+//$magic_cube->print_cube();/**/
 
 ?>
 
