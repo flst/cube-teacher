@@ -53,24 +53,24 @@ body { background: #fff }
 	
 /* GRADIENT */
 .green { background: #009900; }
-a:hover span.green { background: #009900!important; }
+/*a:hover span.green { background: #009900!important; }
 
 	.row1.col1.pos1 .green { background: -webkit-gradient(linear, right top, left top, from(#009900), to(#006900)); background: -moz-linear-gradient(right,  #009900,  #006900); }
 	.row2.col1.pos1 .green { background: -webkit-gradient(linear, right top, left top, from(#009900), to(#006900)); background: -moz-linear-gradient(right,  #009900,  #006900); }
-	.row3.col1.pos1 .green { background: -webkit-gradient(linear, right top, left top, from(#009900), to(#006900)); background: -moz-linear-gradient(right,  #009900,  #006900); }
+	.row3.col1.pos1 .green { background: -webkit-gradient(linear, right top, left top, from(#009900), to(#006900)); background: -moz-linear-gradient(right,  #009900,  #006900); }*/
 
 .red { background: #cf0c0c; }
-a:hover span.red { background: #cf0c0c!important; }
+/*a:hover span.red { background: #cf0c0c!important; }
 	.row1.col3.pos3 .red { background: -webkit-gradient(linear, right top, left center, from(#860b0b), to(#b00e0e)); background: -moz-linear-gradient(right,  #860b0b,  #b00e0e); }
 	.row2.col3.pos3 .red { background: -webkit-gradient(linear, right top, left center, from(#860b0b), to(#b00e0e)); background: -moz-linear-gradient(right,  #860b0b,  #b00e0e); }
 	.row3.col3.pos3 .red { background: -webkit-gradient(linear, right top, left center, from(#860b0b), to(#b00e0e)); background: -moz-linear-gradient(right,  #860b0b,  #b00e0e); }
 
 	.row1.col3.pos2 .red { background: -webkit-gradient(linear, right top, left center, from(#b00e0e), to(#cf0c0c)); background: -moz-linear-gradient(right,  #b00e0e,  #cf0c0c); }
 	.row2.col3.pos2 .red { background: -webkit-gradient(linear, right top, left center, from(#b00e0e), to(#cf0c0c)); background: -moz-linear-gradient(right,  #b00e0e,  #cf0c0c); }
-	.row3.col3.pos2 .red { background: -webkit-gradient(linear, right top, left center, from(#b00e0e), to(#cf0c0c)); background: -moz-linear-gradient(right,  #b00e0e,  #cf0c0c); }
+	.row3.col3.pos2 .red { background: -webkit-gradient(linear, right top, left center, from(#b00e0e), to(#cf0c0c)); background: -moz-linear-gradient(right,  #b00e0e,  #cf0c0c); }*/
 
 .white { background: #fff; color: #333;}
-a:hover span.white { background: #fff!important; }
+/*a:hover span.white { background: #fff!important; }
 	.row1.col1.pos3 .white { background: -webkit-gradient(linear, right top, left center, from(#cccccc), to(#eeeeee)); background: -moz-linear-gradient(right,  #cccccc,  #eeeeee); }
 	.row1.col2.pos3 .white { background: -webkit-gradient(linear, right top, left center, from(#dddddd), to(#f0f0f0)); background: -moz-linear-gradient(right,  #dddddd,  #f0f0f0); }
 	.row1.col3.pos3 .white { background: -webkit-gradient(linear, right top, left center, from(#dddddd), to(#ffffff)); background: -moz-linear-gradient(right,  #dddddd,  #ffffff); }
@@ -78,7 +78,7 @@ a:hover span.white { background: #fff!important; }
 	.row1.col1.pos2 .white { background: -webkit-gradient(linear, right top, left center, from(#dddddd), to(#ffffff)); background: -moz-linear-gradient(right,  #dddddd,  #ffffff); }
 	.row1.col1.pos1	 .white { background: -webkit-gradient(linear, right top, left center, from(#f0f0f0), to(#ffffff)); background: -moz-linear-gradient(right,  #f0f0f0,  #ffffff); }
 	.row1.col2.pos2 .white { background: -webkit-gradient(linear, right top, left center, from(#f0f0f0), to(#ffffff)); background: -moz-linear-gradient(right,  #f0f0f0,  #ffffff); }
-	.row1.col3.pos2 .white { background: -webkit-gradient(linear, right top, left center, from(#f9f9f9), to(#ffffff)); background: -moz-linear-gradient(right,  #f9f9f9,  #ffffff); }
+	.row1.col3.pos2 .white { background: -webkit-gradient(linear, right top, left center, from(#f9f9f9), to(#ffffff)); background: -moz-linear-gradient(right,  #f9f9f9,  #ffffff); }*/
 
 .blue { background: #0000cc; }
 .oringe { background: #ff6c0c; }
@@ -282,10 +282,28 @@ li:hover .tip { display: block; }
 h3 {
 	color: #2a6496;
 	font-weight: bolder;
+	margin-bottom:10px;
 }
 
-#next_step .btn{
+#button_area .btn{
 	height: 36px; font-size:14px; padding: 5px 5px;
+}
+
+.target_block {
+	color: #2a6496;
+	font-weight: bolder;
+}
+
+formula {
+	color: #2a6496;
+	font-weight: bolder;
+}
+.formula_tr {
+	background: #f7f7f9;
+}
+
+.modal-body {
+	line-height: 22px;
 }
 
 /*.tips:after {

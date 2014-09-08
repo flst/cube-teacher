@@ -9,7 +9,7 @@
     <meta name="author" content="">
     <link rel="icon" href="favicon.ico">
 
-    <title>层先法教学助手（beta版），20分钟无成本学会魔方复原</title>
+    <title>完爆所有魔方教程，30分钟手把手教你复原</title>
 
     <!-- Bootstrap core CSS -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
@@ -41,13 +41,13 @@
       <div id="introduce" class="jumbotron" style="text-align: left;">
         <h3>“30分钟学会层先法复原魔方，如何做到呢？”</h3>
         <p></p>
-        <p class="lead">1.约需用2分钟，将魔方状态输入软件</p>
-        <p class="lead">2.软件用层先法解魔方，并手把手教给您复原</p>
-        <p><a class="btn btn-lg btn-success" href="#" role="button">现在开始</a></p>
+        <p class="lead">1.约需用2分钟，将魔方状态输入软件<br><img src="img/input_method.png" width="100%"></p>
+        <p class="lead">2.软件用层先法(7大步)解魔方，并一步一步教给您复原<br><img src="img/steps.png" width="100%"></p>
+        <p><a id="getting_start" class="btn btn-default btn-success" href="#set_cube" role="button">开始输入魔方</a></p>
       </div>
 
-      <div id="set_cube" class="jumbotron" style="padding-right:5px; padding-left:5px; padding-top:5px; padding-bottom:5px;">
-      		<h3 style="margin:10px">“请耐心设置魔方哟”</h3>
+      <div id="set_cube" step=-1 class="jumbotron" style="padding-right:5px; padding-left:5px; padding-top:5px; padding-bottom:15px;">
+      		<h3 style="margin:10px">“请耐心输入魔方哟”</h3>
       		<div id="cube1">
       			<ul>
 					<li class="cube row1 col1 pos1">
@@ -409,73 +409,367 @@
 				</p>
 			</div>
 
-			<div id="next_step">
-				<form id="form" method="POST" action="cube_teacher.php">
-				<input type="hidden" id="form_block_0" name="block[0]" value="">
-				<input type="hidden" id="form_block_1" name="block[1]" value="">
-				<input type="hidden" id="form_block_2" name="block[2]" value="">
-				<input type="hidden" id="form_block_3" name="block[3]" value="">
-				<input type="hidden" id="form_block_4" name="block[4]" value="yellow">
-				<input type="hidden" id="form_block_5" name="block[5]" value="">
-				<input type="hidden" id="form_block_6" name="block[6]" value="">
-				<input type="hidden" id="form_block_7" name="block[7]" value="">
-				<input type="hidden" id="form_block_8" name="block[8]" value="">
+			<div id="button_area">
+				<form id="cube_form" method="POST" action="cube_teacher.php">
+				<input type="hidden" id="form_block_0" name="block[]" value="">
+				<input type="hidden" id="form_block_1" name="block[]" value="">
+				<input type="hidden" id="form_block_2" name="block[]" value="">
+				<input type="hidden" id="form_block_3" name="block[]" value="">
+				<input type="hidden" id="form_block_4" name="block[]" value="yellow">
+				<input type="hidden" id="form_block_5" name="block[]" value="">
+				<input type="hidden" id="form_block_6" name="block[]" value="">
+				<input type="hidden" id="form_block_7" name="block[]" value="">
+				<input type="hidden" id="form_block_8" name="block[]" value="">
 
-				<input type="hidden" id="form_block_9" name="block[9]" value="">
-				<input type="hidden" id="form_block_10" name="block[10]" value="">
-				<input type="hidden" id="form_block_11" name="block[11]" value="">
-				<input type="hidden" id="form_block_12" name="block[12]" value="">
-				<input type="hidden" id="form_block_13" name="block[13]" value="red">
-				<input type="hidden" id="form_block_14" name="block[14]" value="">
-				<input type="hidden" id="form_block_15" name="block[15]" value="">
-				<input type="hidden" id="form_block_16" name="block[16]" value="">
-				<input type="hidden" id="form_block_17" name="block[17]" value="">
+				<input type="hidden" id="form_block_9" name="block[]" value="">
+				<input type="hidden" id="form_block_10" name="block[]" value="">
+				<input type="hidden" id="form_block_11" name="block[]" value="">
+				<input type="hidden" id="form_block_12" name="block[]" value="">
+				<input type="hidden" id="form_block_13" name="block[]" value="red">
+				<input type="hidden" id="form_block_14" name="block[]" value="">
+				<input type="hidden" id="form_block_15" name="block[]" value="">
+				<input type="hidden" id="form_block_16" name="block[]" value="">
+				<input type="hidden" id="form_block_17" name="block[]" value="">
 
-				<input type="hidden" id="form_block_18" name="block[18]" value="">
-				<input type="hidden" id="form_block_19" name="block[19]" value="">
-				<input type="hidden" id="form_block_20" name="block[20]" value="">
-				<input type="hidden" id="form_block_21" name="block[21]" value="">
-				<input type="hidden" id="form_block_22" name="block[22]" value="green">
-				<input type="hidden" id="form_block_23" name="block[23]" value="">
-				<input type="hidden" id="form_block_24" name="block[24]" value="">
-				<input type="hidden" id="form_block_25" name="block[25]" value="">
-				<input type="hidden" id="form_block_26" name="block[26]" value="">
+				<input type="hidden" id="form_block_18" name="block[]" value="">
+				<input type="hidden" id="form_block_19" name="block[]" value="">
+				<input type="hidden" id="form_block_20" name="block[]" value="">
+				<input type="hidden" id="form_block_21" name="block[]" value="">
+				<input type="hidden" id="form_block_22" name="block[]" value="green">
+				<input type="hidden" id="form_block_23" name="block[]" value="">
+				<input type="hidden" id="form_block_24" name="block[]" value="">
+				<input type="hidden" id="form_block_25" name="block[]" value="">
+				<input type="hidden" id="form_block_26" name="block[]" value="">
 
-				<input type="hidden" id="form_block_27" name="block[27]" value="">
-				<input type="hidden" id="form_block_28" name="block[28]" value="">
-				<input type="hidden" id="form_block_29" name="block[29]" value="">
-				<input type="hidden" id="form_block_30" name="block[30]" value="">
-				<input type="hidden" id="form_block_31" name="block[31]" value="white">
-				<input type="hidden" id="form_block_32" name="block[32]" value="">
-				<input type="hidden" id="form_block_33" name="block[33]" value="">
-				<input type="hidden" id="form_block_34" name="block[34]" value="">
-				<input type="hidden" id="form_block_35" name="block[35]" value="">
+				<input type="hidden" id="form_block_27" name="block[]" value="">
+				<input type="hidden" id="form_block_28" name="block[]" value="">
+				<input type="hidden" id="form_block_29" name="block[]" value="">
+				<input type="hidden" id="form_block_30" name="block[]" value="">
+				<input type="hidden" id="form_block_31" name="block[]" value="white">
+				<input type="hidden" id="form_block_32" name="block[]" value="">
+				<input type="hidden" id="form_block_33" name="block[]" value="">
+				<input type="hidden" id="form_block_34" name="block[]" value="">
+				<input type="hidden" id="form_block_35" name="block[]" value="">
 
-				<input type="hidden" id="form_block_36" name="block[36]" value="">
-				<input type="hidden" id="form_block_37" name="block[37]" value="">
-				<input type="hidden" id="form_block_38" name="block[38]" value="">
-				<input type="hidden" id="form_block_39" name="block[39]" value="">
-				<input type="hidden" id="form_block_40" name="block[40]" value="blue">
-				<input type="hidden" id="form_block_41" name="block[41]" value="">
-				<input type="hidden" id="form_block_42" name="block[42]" value="">
-				<input type="hidden" id="form_block_43" name="block[43]" value="">
-				<input type="hidden" id="form_block_44" name="block[44]" value="">
+				<input type="hidden" id="form_block_36" name="block[]" value="">
+				<input type="hidden" id="form_block_37" name="block[]" value="">
+				<input type="hidden" id="form_block_38" name="block[]" value="">
+				<input type="hidden" id="form_block_39" name="block[]" value="">
+				<input type="hidden" id="form_block_40" name="block[]" value="blue">
+				<input type="hidden" id="form_block_41" name="block[]" value="">
+				<input type="hidden" id="form_block_42" name="block[]" value="">
+				<input type="hidden" id="form_block_43" name="block[]" value="">
+				<input type="hidden" id="form_block_44" name="block[]" value="">
 
-				<input type="hidden" id="form_block_45" name="block[45]" value="">
-				<input type="hidden" id="form_block_46" name="block[46]" value="">
-				<input type="hidden" id="form_block_47" name="block[47]" value="">
-				<input type="hidden" id="form_block_48" name="block[48]" value="">
-				<input type="hidden" id="form_block_49" name="block[49]" value="oringe">
-				<input type="hidden" id="form_block_50" name="block[50]" value="">
-				<input type="hidden" id="form_block_51" name="block[51]" value="">
-				<input type="hidden" id="form_block_52" name="block[52]" value="">
-				<input type="hidden" id="form_block_53" name="block[53]" value="">
+				<input type="hidden" id="form_block_45" name="block[]" value="">
+				<input type="hidden" id="form_block_46" name="block[]" value="">
+				<input type="hidden" id="form_block_47" name="block[]" value="">
+				<input type="hidden" id="form_block_48" name="block[]" value="">
+				<input type="hidden" id="form_block_49" name="block[]" value="oringe">
+				<input type="hidden" id="form_block_50" name="block[]" value="">
+				<input type="hidden" id="form_block_51" name="block[]" value="">
+				<input type="hidden" id="form_block_52" name="block[]" value="">
+				<input type="hidden" id="form_block_53" name="block[]" value="">
 
-				<a class="btn btn-default btn-primary" id="roll_back" role="button" style="width:60px;">倒退</a> &nbsp; <button id="start_resolve" type="submit" class="btn btn-default btn-success" style="width:140px;">开始学习复原</button>
+				<a class="btn btn-default btn-primary" id="roll_back" role="button" style="width:60px;">倒退</a> &nbsp; <a id="start_resolve" class="btn btn-default btn-success" href="#step_0" nextstep=0 style="width:140px;">开始学习复原</a>
 				</form>
 			</div>
       </div>
 
+	  <div id="step_0" step=0 class="jumbotron" style="text-align: left;">
+        <h3>“2分钟学习下基础概念”</h3>
+        <p></p>
+        <p class="lead"><b>1.块的概念、面的概念</b><br><img src="img/basic_concept.png" width="100%"></p>
+        <p class="lead"><b>2.公式的概念</b><br><img src="img/formula.png" width="100%"><br>注意，存在这样的公式：F2，代表F面转180°，其中“2”表示连续做2个公式F。同样y2表示魔方整体沿U方向转180°</p>
+        <p><a id="getting_start" class="btn btn-default btn-success" href="#step_1" nextstep=1 role="button">开始复原</a></p>
+      </div>
+
+      <div class="modal fade" id="start_cube_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  		<div class="modal-dialog">
+    		<div class="modal-content">
+      		<div class="modal-header">
+        		<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        		<h4 class="modal-title" id="myModalLabel">开始前请将魔方调整到如下状态</h4>
+      		</div>
+      		<div class="modal-body">
+        		<img src="img/start_cube.png" width="100%">
+      		</div>
+      		<div class="modal-footer">
+        		<button type="button" class="btn btn-default" data-dismiss="modal">我知道了</button>
+      		</div>
+    		</div>
+  		</div>
+	</div>
+
+	<div class="modal fade" id="cube_formula_demo" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  		<div class="modal-dialog">
+    		<div class="modal-content">
+      		<div class="modal-header">
+        		<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        		<h4 class="modal-title" id="myModalLabel">魔方公式图例</h4>
+      		</div>
+      		<div class="modal-body">
+        		<img src="img/formula.png" width="100%"><br>
+        		注意，存在这样的公式：F2，代表F面转180°，其中“2”表示连续做2个公式F。同样y2表示魔方整体沿U方向转180°
+      		</div>
+      		<div class="modal-footer">
+        		<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+      		</div>
+    		</div>
+  		</div>
+	</div>
+
+	<div class="modal fade" id="step_skills" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  		<div class="modal-dialog">
+    		<div class="modal-content">
+      		<div class="modal-header">
+        		<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        		<h4 class="modal-title" id="myModalLabel">本步骤技巧（图中公式需逐步记忆）</h4>
+      		</div>
+      		<?php
+				$content = array();
+				$content[] = "第1步：底层棱块（十字）复原，无技巧，需自己多练习，相对容易";
+				$content[] = "第2步：
+				<br> 1.在顶层找含有底面颜色（白色）的角块，然后通过顶层转动，将角块放在它目标位置的正上方，整个魔方沿y或y'转动，使得目标角块在F面与R面夹角。该过程，参考“调整公式”。
+				<br> 2.判断白色面朝向，分别为 朝前，朝右，朝上，根据下图，做相应的“复原公式”
+				<br> 3.若有角块藏在底层，可使用公式 (1)，将其置换到顶层";
+				$content[] = "第3步：
+				<br> 1.在顶层找不含有顶面色（黄色）的棱块，然后通过顶层转动，将棱块放在与其侧面颜色一致的中心块位置，整个魔方沿y或y'转动，使得该中心块面向自己。该过程，参考“调整公式”。
+				<br> 2.判断该棱块的目标位置是在左面，还是在右面，根据下图，做相应的“复原公式”
+				<br> 3.若有楞块藏在第二层，整个魔方沿y或y'转动，可使得目标棱块在F面与R面夹角，并使用公式 (1)，将其置换到顶层";
+				$content[] = "第4步：
+				<br> 1.下图为顶视图，图的正下方为前面，及朝向你的面，整个魔方沿y或y'转动，使得顶部黄色块图形与下图中其中任意一个一致。该过程，参考“调整公式”。
+				<br> 2.调整后，做相应的“复原公式”";
+				$content[] = "第5步：
+				<br> 1.下图为顶视图，图的正下方为前面，及朝向你的面，整个魔方沿y或y'转动，使得顶部黄色块图形与下图中其中任意一个一致，图中魔方四周的黄色条，代表角块中黄色面的朝向。该过程，参考“调整公式”。
+				<br> 2.调整后，做相应的“复原公式”";
+				$content[] = "第6步：
+				<br> 1.在顶层（第三层）的侧面（4个面），寻找一个侧面上，两个角块的颜色是一样的，找到后通过顶层转动，让该面朝向右手边。若全都不一样，则无需做该步骤。该过程，参考“调整公式”。
+				<br> 2.在做公示前，需执行公式x'调整魔方，将顶面翻向自己做前面。该过程，参考“调整公式”
+				<br> 3.调整后，直接做“复原公式”。
+				<br> 4.做完公式后，恢复魔方姿态。该过程，参考“恢复调整公式”。
+				<br> 5.若4个侧面角块的颜色都一样，则通过顶层转动调整角块颜色与中心块一致。完成该步骤复原过程";
+				$content[] = "第7步：
+				<br> 1.整个魔方沿y或y'转动，使得棱块中已复原的块背向自己（及在背面）。该过程，参考“调整公式”。
+				<br> 2.调整后。直接做“复原公式”。
+				<br> 3.若没有任何棱块是复原的，则无需调整魔方，直接做“复原公式”";
+				for($i=0; $i<7; $i++)
+				{
+					
+			?>
+      		<div class="modal-body step_skills" id="skill_<?php echo $i+1?>">
+        		<?php echo $content[$i];?>
+      		</div>
+      			<?php }?>
+      		<div class="modal-footer">
+        		<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+      		</div>
+    		</div>
+  		</div>
+	</div>
+
+<?php
+	$title = array();
+	$title[] = "第1步：复原第一层棱块";
+	$title[] = "第2步：复原第一层角块";
+	$title[] = "第3步：复原第二层棱块";
+	$title[] = "第4步：复原第三层棱块颜色";
+	$title[] = "第5步：复原第三层角块颜色";
+	$title[] = "第6步：复原第三层角块位置";
+	$title[] = "第7步：复原第三层棱块位置";
+
+	$end_title = array();
+	$end_title[] = "恭喜你完成第1步，很容易吧！";
+	$end_title[] = "第2步轻松完成，小试牛刀成功！";
+	$end_title[] = "第3步完成，有点复杂了，但你没问题！";
+	$end_title[] = "第4步也完成，这步有点简单，是不？！";
+	$end_title[] = "完成第5步，胜利更近一步！";
+	$end_title[] = "第6步搞定，加油！还有最后一步！";
+	$end_title[] = "恭喜你学会了用层先法复原魔方！后续练习，可以慢慢牢记“复原公式”哟";
+
+
+	$button_title = "";
+	$step_xml="";
+	$img_xml="";
+
+	for($i=0; $i<7; $i++)
+	{
+		if($i<6) {
+			$button_title = "开始第".($i+2)."步";
+			$next_step_xml="href='#step_".($i+2)."' nextstep=".($i+2);
+		}
+		else {
+			$button_title = "分享给好友";
+			$next_step_xml="";
+		}
+
+		if($i ==0)
+		{
+			$img_xml = '<img src="img/step_1_1.png"> <img src="img/step_1_2.png">';
+		}
+		else
+			$img_xml = '<img src="img/step_'.($i+1).'.png">';
+?>
+	  <div id="step_<?php echo $i+1;?>" step=<?php echo $i+1;?> class="row marketing" style="text-align: left;">
+        <h3>“<?php echo $title[$i];?>”</h3>
+        <p>
+        	<table class="table table-bordered">
+        		<tr id="step_<?php echo $i+1;?>_first_child">
+        			<td width="20%">复原目标</td>
+        			<td><?php echo $img_xml;?></td>
+        		</tr>
+        		<!--<tr>
+        			<td>当前状态</td>
+        			<td>真图(待补充)</td>
+        		</tr>
+        		<tr>
+        			<td>状态确认</td>
+        			<td>真图(待补充)</td>
+        		</tr>-->
+        	</table>
+        </p>
+        <h3>“<?php echo $end_title[$i];?>”</h3>
+        <p></p>
+        <p><a id="start_step_<?php echo $i+2;?>" class="btn btn-default btn-success" role="button"<?php echo $next_step_xml;?>><?php echo $button_title;?></a></p>
+      </div>
+<?php } ?>
+   <!--   <div id="step_2" step=2 class="row marketing" style="text-align: left;">
+        <h3>“第2步：复原第一层角块”</h3>
+        <p>
+        	<table class="table table-bordered">
+        		<tr>
+        			<td width="20%">复原目标</td>
+        			<td>图例(待补充)</td>
+        		</tr>
+        		<tr id="step_2_first_child">
+        			<td>当前状态</td>
+        			<td>真图(待补充)</td>
+        		</tr>
+        		<tr>
+        			<td>状态确认</td>
+        			<td>真图(待补充)</td>
+        		</tr>
+        	</table>
+        </p>
+        <h3>“第2步轻松完成，小试牛刀成功！”</h3>
+        <p></p>
+        <p><a id="start_step_3" class="btn btn-lg btn-success" nextstep=3 role="button">开始第3步</a></p>
+      </div>
+
+      <div id="step_3" step=3 class="row marketing" style="text-align: left;">
+        <h3>“第3步：复原第二层棱块”</h3>
+        <p>
+        	<table class="table table-bordered">
+        		<tr>
+        			<td width="20%">复原目标</td>
+        			<td>图例(待补充)</td>
+        		</tr>
+        		<tr id="step_3_first_child">
+        			<td>当前状态</td>
+        			<td>真图(待补充)</td>
+        		</tr>
+        		<tr>
+        			<td>状态确认</td>
+        			<td>真图(待补充)</td>
+        		</tr>
+        	</table>
+        </p>
+        <h3>“第3步完成，有点复杂了，但你没问题！”</h3>
+        <p></p>
+        <p><a id="start_step_4" class="btn btn-lg btn-success" nextstep=4 role="button">开始第4步</a></p>
+      </div>
+
+      <div id="step_4" step=4 class="row marketing" style="text-align: left;">
+        <h3>“第4步：复原第三层棱块颜色”</h3>
+        <p>
+        	<table class="table table-bordered">
+        		<tr>
+        			<td width="20%">复原目标</td>
+        			<td>图例(待补充)</td>
+        		</tr>
+        		<tr id="step_4_first_child">
+        			<td>当前状态</td>
+        			<td>真图(待补充)</td>
+        		</tr>
+        		<tr>
+        			<td>状态确认</td>
+        			<td>真图(待补充)</td>
+        		</tr>
+        	</table>
+        </p>
+        <h3>“第4步也完成，这步有点简单，是不？！”</h3>
+        <p></p>
+        <p><a id="start_step_5" class="btn btn-lg btn-success" nextstep=5 role="button">开始第5步</a></p>
+      </div>
+
+      <div id="step_5" step=5 class="row marketing" style="text-align: left;">
+        <h3>“第5步：复原第三层角块颜色”</h3>
+        <p>
+        	<table class="table table-bordered">
+        		<tr>
+        			<td width="20%">复原目标</td>
+        			<td>图例(待补充)</td>
+        		</tr>
+        		<tr id="step_5_first_child">
+        			<td>当前状态</td>
+        			<td>真图(待补充)</td>
+        		</tr>
+        		<tr>
+        			<td>状态确认</td>
+        			<td>真图(待补充)</td>
+        		</tr>
+        	</table>
+        </p>
+        <h3>“完成第5步，胜利更近一步！”</h3>
+        <p></p>
+        <p><a id="start_step_6" class="btn btn-lg btn-success" nextstep=6 role="button">开始第6步</a></p>
+      </div>
+
+	<div id="step_6" step=6 class="row marketing" style="text-align: left;">
+        <h3>“第6步：复原第三层角块位置”</h3>
+        <p>
+        	<table class="table table-bordered">
+        		<tr>
+        			<td width="20%">复原目标</td>
+        			<td>图例(待补充)</td>
+        		</tr>
+        		<tr id="step_6_first_child">
+        			<td>当前状态</td>
+        			<td>真图(待补充)</td>
+        		</tr>
+        		<tr>
+        			<td>状态确认</td>
+        			<td>真图(待补充)</td>
+        		</tr>
+        	</table>
+        </p>
+        <h3>“第6步搞定，加油！还有最后一步！”</h3>
+        <p></p>
+        <p><a id="start_step_7" class="btn btn-lg btn-success" nextstep=7 role="button">开始第7步</a></p>
+    </div>
+
+    <div id="step_7" step=7 class="row marketing" style="text-align: left;">
+        <h3>“第7步：复原第三层棱块位置”</h3>
+        <p>
+        	<table class="table table-bordered">
+        		<tr>
+        			<td width="20%">复原目标</td>
+        			<td>图例(待补充)</td>
+        		</tr>
+        		<tr id="step_7_first_child">
+        			<td>当前状态</td>
+        			<td>真图(待补充)</td>
+        		</tr>
+        		<tr>
+        			<td>状态确认</td>
+        			<td>真图(待补充)</td>
+        		</tr>
+        	</table>
+        </p>
+        <h3>“恭喜你学会了用层先法复原魔方！”</h3>
+        <p></p>
+        <p><a id="share_result" class="btn btn-lg btn-success" role="button">分享给好友</a></p>
+    </div>-->
       <!--<div class="row marketing">
         <div class="col-lg-6">
           <h4>Subheading</h4>
@@ -500,8 +794,16 @@
         </div>
       </div>-->
 
+<nav id="step_naver" class="navbar navbar-default navbar-fixed-bottom" role="navigation">
+   <div style="text-align: center; padding-top:6px;">
+   		<button class="btn btn-primary btn-default" data-toggle="modal" data-target="#cube_formula_demo">公式图例</button>
+   		<button class="btn btn-primary btn-default" data-toggle="modal" data-target="#step_skills">本步骤技巧</button>
+   </div>
+</nav>
+
+
       <div class="footer">
-        <p>&copy; Company 2014</p>
+        <p>&copy; Copyright 风流沙驼,  Email: <a href="mailto:flst@qq.com">flst@qq.com</a></p>
       </div>
 
     </div> <!-- /container -->
@@ -509,6 +811,7 @@
 
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
     <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
     <script src="js/ie-emulation-modes-warning.js"></script>
     <script src="js/cube.js"></script>
   </body>

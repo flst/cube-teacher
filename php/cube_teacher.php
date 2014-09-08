@@ -1,17 +1,8 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<!-- saved from url=(0119)http://media.smashingmagazine.com/cdn_smash/wp-content/uploads/uploader/images/css3-designs/css3-rubiks-cube/index.html -->
-<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-        <title>层先法教学助手（beta版），20分钟无成本学会魔方复原</title>
-        <link rel="stylesheet" href="./index_files/stylesheet.css" type="text/css">
-        <!--[if IE]>
-            <link rel="stylesheet" href="css/ie.css" type="text/css" />
-        <![endif]-->
-    </head>
-<body>
-
 <?php
 //cube_teacher
 //by sunweiwei 2014/9/5 
+//echo '[[{"set_f":"","exe_f":"R2 D\'","unti_set_f":""},{"set_f":"","exe_f":"","unti_set_f":""},{"set_f":"","exe_f":"R\'","unti_set_f":""},{"set_f":"","exe_f":"L2","unti_set_f":""}],[{"set_f":"y U","exe_f":"R U R\'","unti_set_f":""},{"set_f":"y2","exe_f":"U R U\' R\'","unti_set_f":""}],[{"set_f":"y","exe_f":"U\' L\' U L U F U\' F\'","unti_set_f":""},{"set_f":"y2","exe_f":"U R U\' R\' U\' F\' U F","unti_set_f":""},{"set_f":"y\' U R U\' R\' U\' F\' U F U2","exe_f":"U R U\' R\' U\' F\' U F","unti_set_f":""}],[{"set_f":"y","exe_f":"F R U R\' U\' F\'","unti_set_f":""},{"set_f":"y","exe_f":"F R U R\' U\' F\'","unti_set_f":""}],[{"set_f":"","exe_f":"R U R\' U R U2 R\'","unti_set_f":""}],[{"set_f":"U\' x\'","exe_f":"R2 D2 R\' U\' R D2 R\' U R\'","unti_set_f":"x"}],[{"set_f":"y\'","exe_f":"R U\' R U R U R U\' R\' U\' R2","unti_set_f":""}]]';
+//exit;
 
 class Block {
 	var $_disp_name;
@@ -715,6 +706,54 @@ class MagicCube {
     }
 }
 
+class FormulaItem {
+    var $_target_name;
+    var $_target_type;
+    var $_set_formula;
+    var $_exe_formula;
+    var $_unti_set_formula;
+
+    function __construct($set_formula, $exe_formula, $target_name, $target_type, $unti_set_formula="") {
+        $this->_set_formula = trim($set_formula);
+        $this->_exe_formula = trim($exe_formula);
+        $this->_target_name = trim($target_name);
+        $this->_target_type = trim($target_type);
+        $this->_unti_set_formula = trim($unti_set_formula);
+    }
+
+    function gen_array() {
+        $formula_array = array();
+        $formula_array["set_f"] = $this->_set_formula;
+        $formula_array["exe_f"] = $this->_exe_formula;
+        $formula_array["unti_set_f"] = $this->_unti_set_formula;
+        $formula_array["t_name"] = $this->_target_name;
+        $formula_array["t_type"] = $this->_target_type;
+        return $formula_array;
+    }
+}
+
+class FormulaRecorder {
+    var $_formula;
+    function __construct() {
+        $this->_formula = array();
+        $this->_formula[0] = array();
+        $this->_formula[1] = array();
+        $this->_formula[2] = array();
+        $this->_formula[3] = array();
+        $this->_formula[4] = array();
+        $this->_formula[5] = array();
+        $this->_formula[6] = array();
+    }
+
+    function recorder_formula($step, $formula_item) {
+        $this->_formula[$step][] = $formula_item->gen_array();
+    }
+
+    function gen_json_output() {
+        return json_encode($this->_formula);
+    }
+}
+
 class CubeOperator {
     var $_cube;
     function __construct($cube) {
@@ -722,10 +761,10 @@ class CubeOperator {
     }
 
     function execute_formula($formula) {
-        echo "执行公式: ";
+        //echo "执行公式: ";
         
         foreach ($formula as $f) {
-            echo $f." ";
+            //echo $f." ";
             if (strlen($f) == 2 && $f[1] == "2") {
                 $this->_cube->turn($f[0]);
                 $this->_cube->turn($f[0]);
@@ -734,7 +773,7 @@ class CubeOperator {
                 $this->_cube->turn($f);
         }
 
-        echo "<br>";
+        //echo "<br>";
     }
  
     function execute_formula_by_string($formula_string) {
@@ -749,9 +788,11 @@ class CubeResolver {
     var $_formula_set;
     var $_formula_unti_set;
     var $_resolver_condition;
+    var $_formula_recorder;
     
-    function __construct($cube) {
+    function __construct($cube, $formula_recorder) {
         $this->_cube = $cube;
+        $this->_formula_recorder = $formula_recorder;
         $this->_formula_set = array("F","F'","B","B'","R","R'","L","L'","U","U'","D","D'");
         $this->_formula_unti_set = array("F'","F","B'","B","R'","R","L'","L","U'","U","D'","D");
         $this->_formula_stack = array();
@@ -762,6 +803,7 @@ class CubeResolver {
         $this->_resolver_condition["fouth_cross"] = array("RNW", "ONW", "NGW", "NBW");
         $this->_resolver_condition["1st_corner"] = array("RGW", "OGW", "RBW", "OBW");
         $this->_resolver_condition["2st_side"] = array("RGN", "OGN", "RBN", "OBN");
+        //$this->_resolver_formula = array();
     }
 
     function execute_formula($formula) {
@@ -918,7 +960,7 @@ class CubeResolver {
                 $this->execute_formula_by_string($formula_unti_set[$i]);
             }
 
-            echo "在顶层找到含底面颜色（白色）的角块：".$block->get_disp_name().", 将角块通过顶层转动至要还原位置的正上方，公式为: ".$set_formula."<br>";
+            //echo "在顶层找到含底面颜色（白色）的角块：".$block->get_disp_name().", 将角块通过顶层转动至要还原位置的正上方，公式为: ".$set_formula."<br>";
 
             //execute
             $exe_formula = array();
@@ -933,7 +975,10 @@ class CubeResolver {
                 $exe_formula = "R U2 R' U' R U R'";
                 
             $this->execute_formula_by_string($exe_formula);
-            echo "执行公式：".$exe_formula."<br>";
+            //echo "执行公式：".$exe_formula."<br>";
+
+            $formula_item = new FormulaItem($set_formula, $exe_formula, $block->get_disp_name(), "角块");
+            $this->_formula_recorder->recorder_formula(1, $formula_item);
         }
     }
 
@@ -1006,7 +1051,7 @@ class CubeResolver {
                 $this->execute_formula_by_string($formula_unti_set[$i]);
             }
 
-            echo "在顶层找到不含顶面颜色（黄色）的棱块: ".$block->get_disp_name()."，将棱块通过顶层转动至与侧面颜色一致的中心块位置并面向自己，公式为: ".$set_formula."<br>";
+            //echo "在顶层找到不含顶面颜色（黄色）的棱块: ".$block->get_disp_name()."，将棱块通过顶层转动至与侧面颜色一致的中心块位置并面向自己，公式为: ".$set_formula."<br>";
 
             //execute
             $exe_formula = array();
@@ -1018,8 +1063,10 @@ class CubeResolver {
                 $exe_formula = "U R U' R' U' F' U F";
                 
             $this->execute_formula_by_string($exe_formula);
-            echo "执行公式：".$exe_formula."<br>";
+            //echo "执行公式：".$exe_formula."<br>";
 
+            $formula_item = new FormulaItem($set_formula, $exe_formula, $block->get_disp_name(), "棱块");
+            $this->_formula_recorder->recorder_formula(2, $formula_item);
         }
     }
 
@@ -1031,29 +1078,37 @@ class CubeResolver {
                     $block_list[] = $b;
             }
 
+            $set_formula = "";
+
             if (count($block_list) == 4)
                 break;
                
             if (count($block_list) == 2) {
-                if ($block_list[0]->get_y() == 0 && $block_list[0]->get_y() == 0) {
-                    echo "调整魔方: y<br>";
+                if ($block_list[0]->get_y() == 0 && $block_list[1]->get_y() == 0) {
+                    //echo "调整魔方: y<br>";
+                    $set_formula = "y";
                     $this->_cube->turn("y");
                 }
-                if ($block_list[0]->get_x() + $block_list[0]->get_y() + $block_list[1]->get_x() + $block_list[1]->get_y() == -2) {
-                    echo "s调整魔方: y2<br>";
+                else if ($block_list[0]->get_x() + $block_list[0]->get_y() + $block_list[1]->get_x() + $block_list[1]->get_y() == -2) {
+                    //echo "调整魔方: y2<br>";
+                    $set_formula = "y2";
                     $this->_cube->turn("y");
                     $this->_cube->turn("y");
                 }
-                if ($block_list[0]->get_x() + $block_list[0]->get_y() + $block_list[1]->get_x() + $block_list[1]->get_y() == 0) {
+                else if ($block_list[0]->get_x() + $block_list[0]->get_y() + $block_list[1]->get_x() + $block_list[1]->get_y() == 0) {
                     foreach ($block_list as $b) {
                         if ($b->get_y() == 0) {
                             if ($b->get_x() == -1) {
-                                echo "调整魔方: y<br>";
+                                //echo "调整魔方: y<br>";
+                                $set_formula = "y";
                                 $this->_cube->turn("y");
+                                break;
                             }
                             if ($b->get_x() == 1) {
-                                echo "调整魔方: y'<br>";
+                                //echo "调整魔方: y'<br>";
+                                $set_formula = "y'";
                                 $this->_cube->turn("y'");
+                                break;
                             }
                         } 
                     }
@@ -1061,7 +1116,10 @@ class CubeResolver {
             }                        
             $exe_formula = "F R U R' U' F'";
             $this->execute_formula_by_string($exe_formula);
-            echo "执行公式：".$exe_formula."<br>";
+            //echo "执行公式：".$exe_formula."<br>";
+
+            $formula_item = new FormulaItem($set_formula, $exe_formula, "", "");
+            $this->_formula_recorder->recorder_formula(3, $formula_item);
         }
     }
  
@@ -1168,11 +1226,14 @@ class CubeResolver {
                 }
             }
 
-            echo "调整魔方: ".$set_formula."<br>";
+            //echo "调整魔方: ".$set_formula."<br>";
 
             $exe_formula = "R U R' U R U2 R'";
             $this->execute_formula_by_string($exe_formula);
-            echo "执行公式：".$exe_formula."<br>";
+            //echo "执行公式：".$exe_formula."<br>";
+
+            $formula_item = new FormulaItem($set_formula, $exe_formula, "", "");
+            $this->_formula_recorder->recorder_formula(4, $formula_item);
         }
     }
 
@@ -1223,7 +1284,9 @@ class CubeResolver {
                     $this->execute_formula_by_string($formula_set[$i]);
                     //print $block->get_name(), $block->get_x(), $block->get_y(), $block->get_z(), $block->get_tx(), $block->get_ty(), $block->get_tz()
                     if ($this->_cube->find_block_by_name("RGY")->is_recover()) {
-                        echo "顶层角块复原完毕，现调整到最终位置，公式为: ".$formula_set[$i]."<br>";
+                        //echo "顶层角块复原完毕，现调整到最终位置，公式为: ".$formula_set[$i]."<br>";
+                        $formula_item = new FormulaItem($formula_set[$i], "", "", "");
+                        $this->_formula_recorder->recorder_formula(5, $formula_item);
                         break;
                     }
                     $this->execute_formula_by_string($formula_unti_set[$i]);
@@ -1246,16 +1309,19 @@ class CubeResolver {
             //set 
             $this->execute_formula_by_string("x'");
             $set_formula = $set_formula."x' ";
-            echo "将顶层已还原好的角块（同一面两个顶层角块颜色一致）朝向右手边，同时将魔方顶面翻向自己做前面，公式为: ".$set_formula."<br>";
+            //echo "将顶层已还原好的角块（同一面两个顶层角块颜色一致）朝向右手边，同时将魔方顶面翻向自己做前面，公式为: ".$set_formula."<br>";
 
             //execute
             $exe_formula = "R2 D2 R' U' R D2 R' U R'";
             $this->execute_formula_by_string($exe_formula);
-            echo "执行公式：".$exe_formula."<br>";
+            //echo "执行公式：".$exe_formula."<br>";
  
             //unti-set
             $this->execute_formula_by_string("x");
-            echo "做完公式恢复原始魔方姿态，公式为: x <br>";
+            //echo "做完公式恢复原始魔方姿态，公式为: x <br>";
+
+            $formula_item = new FormulaItem($set_formula, $exe_formula, "", "", "x");
+            $this->_formula_recorder->recorder_formula(5, $formula_item);
         }
     }
 
@@ -1297,12 +1363,15 @@ class CubeResolver {
                 }
             }
 
-            echo "已还原好的棱块背向自己，调整魔方，公式为: ".$set_formula."<br>";
+            //echo "已还原好的棱块背向自己，调整魔方，公式为: ".$set_formula."<br>";
 
             //execute 
             $exe_formula = "R U' R U R U R U' R' U' R2";
             $this->execute_formula_by_string($exe_formula);
-            echo "执行公式：".$exe_formula."<br>";
+            //echo "执行公式：".$exe_formula."<br>";
+
+            $formula_item = new FormulaItem($set_formula, $exe_formula, "", "");
+            $this->_formula_recorder->recorder_formula(6, $formula_item);
         }
     }
  
@@ -1338,13 +1407,38 @@ class CubeResolver {
             return;
         }
 
+        //first layer side block
         $this->_formula_stack = array();
 
         for($max_depth = 1; $max_depth<8; $max_depth++) 
             //print "max_depth: ", max_depth
             if ($this->depth_first_search(0, $max_depth, $step)) 
                 break;
-   
+        if (count($this->_formula_stack) == 0)
+            return $this->_formula_stack;
+
+        //merge formula
+        $tmp_formula_stack = array();
+        foreach ($this->_formula_stack as $b) {
+            $tmp_len = count($tmp_formula_stack);
+            if($tmp_len>0 && $b == $tmp_formula_stack[$tmp_len-1])
+                $tmp_formula_stack[$tmp_len-1] = $b[0]."2";
+            else
+                $tmp_formula_stack[] = $b;
+        }
+        $this->_formula_stack = $tmp_formula_stack;
+        
+        //record formula
+        $formula_stack_str = "";
+        foreach ($this->_formula_stack as $b) {
+            $formula_stack_str = $formula_stack_str.$b." ";
+        }
+        $tmp_len = count($this->_resolver_condition[$step]);
+        $tmp_name = $this->_resolver_condition[$step][$tmp_len-1];
+        $block = $this->_cube->find_block_by_name($tmp_name);
+        $formula_item = new FormulaItem("", $formula_stack_str, $block->get_disp_name(), "棱块");
+        $this->_formula_recorder->recorder_formula(0, $formula_item);
+
         //print "turn time: ", $this->_cube->turn_time
         return $this->_formula_stack;
     }
@@ -1358,13 +1452,27 @@ if (isset($_POST["formula"])) {
     $disr_formula = str_replace("\\","",trim($_POST["formula"]));
 }
 
+$is_ajax_post = false;
+
 if (isset($_POST["block"])) {
     $block_color = $_POST["block"];
     //print_r($block_color);
+    $is_ajax_post = true;
     $magic_cube->set_cube_color($block_color);
 }
 else{
 ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!-- saved from url=(0119)http://media.smashingmagazine.com/cdn_smash/wp-content/uploads/uploader/images/css3-designs/css3-rubiks-cube/index.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <title>层先法教学助手（beta版），20分钟无成本学会魔方复原</title>
+        <link rel="stylesheet" href="./index_files/stylesheet.css" type="text/css">
+        <!--[if IE]>
+            <link rel="stylesheet" href="css/ie.css" type="text/css" />
+        <![endif]-->
+    </head>
+<body>
+
 魔方教学助手beta版<br><br>
 该工具用途是超低成本的让初学者学会使用层先法复原魔方，当前beta版还会升级，后续升级会有：<br>
 1）将公式字母都变成直观的图片示例，类似互动游戏教学那样。<br>
@@ -1378,55 +1486,58 @@ else{
 <hr>
 
 <?php
-echo "开始打乱魔方：";
+echo "开始打乱魔方：".$disr_formula;
 $cube_opt->execute_formula_by_string($disr_formula);
 echo "<br>";
 }
 //echo "<br>";
 //$magic_cube->print_cube();
-echo "<br>开始还原魔方，共7大步，请耐心还原，第一次预计20分钟完成复原<br>";
+//echo "<br>开始还原魔方，共7大步，请耐心还原，第一次预计20分钟完成复原<br>";
 
 //create a cube who has bottom side block only
 $magic_cube_cross = clone $magic_cube;
 $magic_cube_cross->to_cross_cube();
 
+$formula_recorder = new FormulaRecorder();
 //step 1, 1st layer side
-echo "<br>=====第一步，还原底层（十字）棱块=====<br>";
-$cube_rsl = new CubeResolver($magic_cube_cross);
+//echo "<br>=====第一步，还原底层（十字）棱块=====<br>";
+$cube_rsl = new CubeResolver($magic_cube_cross, $formula_recorder);
 //start = time.clock()
 $cube_opt->execute_formula($cube_rsl->resolver_step("first_cross"));
 $cube_opt->execute_formula($cube_rsl->resolver_step("secend_cross"));
 $cube_opt->execute_formula($cube_rsl->resolver_step("third_cross"));
 $cube_opt->execute_formula($cube_rsl->resolver_step("fouth_cross"));
 
-$cube_rsl = new CubeResolver($magic_cube);
+$cube_rsl = new CubeResolver($magic_cube, $formula_recorder);
 //step 2, 1st layer corner
-echo "<br>=====第二步, 还原底层角块=====<br>";
+//echo "<br>=====第二步, 还原底层角块=====<br>";
 $cube_rsl->resolver_step("1st_corner");
 
 //step 3, 2st layer side
-echo "<br>=====第三步, 还原第二层棱块=====<br>";
+//echo "<br>=====第三步, 还原第二层棱块=====<br>";
 $cube_rsl->resolver_step("2st_side");
 
 //step 4, 3st layer side color
-echo "<br>=====第四步, 还原顶层（十字）棱块颜色=====<br>";
+//echo "<br>=====第四步, 还原顶层（十字）棱块颜色=====<br>";
 $cube_rsl->resolver_step("3st_side_color");
 
 //step 5, 3st layer corner color
-echo "<br>=====第五步, 还原顶层角块颜色=====<br>";
+//echo "<br>=====第五步, 还原顶层角块颜色=====<br>";
 $cube_rsl->resolver_step("3st_corner_color");
 
 //step 6, 3st layer corner pos
-echo "<br>=====第六步, 还原顶层角块位置=====<br>";
+//echo "<br>=====第六步, 还原顶层角块位置=====<br>";
 $cube_rsl->resolver_step("3st_corner_pos");
 
 //step 7, 3st layer side pos
-echo "<br>=====第七步，还原顶层棱块位置=====<br>";
+//echo "<br>=====第七步，还原顶层棱块位置=====<br>";
 $cube_rsl->resolver_step("3st_side_pos");
 
+echo $formula_recorder->gen_json_output();
 //elapsed = (time.clock() - start)
 //$magic_cube->print_cube();/**/
 
 ?>
-
+<?php if(!$is_ajax_post){?>
 </body></html>
+<?php }?>
