@@ -32,22 +32,65 @@
   </head>
 
   <body>
+<?php
+function CheckSubstrs($substrs,$text){
+        foreach($substrs as $substr)
+            if(false!==strpos($text,$substr)){
+            return true;
+        }
+        return false;
+}
 
+function isMobile(){
+    $useragent=isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : '';
+    $useragent_commentsblock=preg_match('|\(.*?\)|',$useragent,$matches)>0?$matches[0]:'';
+    
+    $mobile_os_list=array('Google Wireless Transcoder','Windows CE','WindowsCE','Symbian','Android','armv6l','armv5','Mobile','CentOS','mowser','AvantGo','Opera Mobi','J2ME/MIDP','Smartphone','Go.Web','Palm','iPAQ');
+    $mobile_token_list=array('Profile/MIDP','Configuration/CLDC-','160×160','176×220','240×240','240×320','320×240','UP.Browser','UP.Link','SymbianOS','PalmOS','PocketPC','SonyEricsson','Nokia','BlackBerry','Vodafone','BenQ','Novarra-Vision','Iris','NetFront','HTC_','Xda_','SAMSUNG-SGH','Wapaka','DoCoMo','iPhone','iPod');
+ 
+    $found_mobile=CheckSubstrs($mobile_os_list,$useragent_commentsblock) ||
+    CheckSubstrs($mobile_token_list,$useragent);
+ 
+    if ($found_mobile){
+        return true;
+    }else{
+        return false;
+    }
+}
+?>
     <div class="container">
-      <div class="header" style="text-align:center;padding:10px;">
-        <h2 class="text-muted">魔方复原助手</h2>
+      <div class="header" style="text-align:center;padding:10px;" id="top">
+
+      	<ul class="nav nav-pills pull-right" role="tablist" id="restart">
+          <li role="presentation" class="active"><a href="#" onclick="location.reload()">重来</a></li>
+        </ul>
+        <h3 class="text-muted">魔方复原助手</h3>
+
       </div>
+		<?php 
+			if(!isMobile()){
+			echo '<div class="bdsharebuttonbox"><a href="#" class="bds_more" data-cmd="more"></a><a href="#" class="bds_qzone" data-cmd="qzone"></a><a href="#" class="bds_tsina" data-cmd="tsina"></a><a href="#" class="bds_tqq" data-cmd="tqq"></a><a href="#" class="bds_renren" data-cmd="renren"></a><a href="#" class="bds_weixin" data-cmd="weixin"></a></div>';
+			}
+
+		?>
+		<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdPic":"","bdStyle":"0","bdSize":"16"},"share":{},"image":{"viewList":["qzone","tsina","tqq","renren","weixin"],"viewText":"分享到：","viewSize":"16"},"selectShare":{"bdContainerClass":null,"bdSelectMiniList":["qzone","tsina","tqq","renren","weixin"]}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+
 
       <div id="introduce" class="jumbotron" style="text-align: left;">
         <h3>“30分钟学会层先法复原魔方，如何做到呢？”</h3>
         <p></p>
         <p class="lead">1.约需用2分钟，将魔方状态输入软件<br><img src="img/input_method.png" width="100%"></p>
         <p class="lead">2.软件用层先法(7大步)解魔方，并一步一步教给您复原<br><img src="img/steps.png" width="100%"></p>
-        <p><a id="getting_start" class="btn btn-default btn-success" href="#set_cube" role="button">开始输入魔方</a></p>
+        <p><a id="getting_start" class="btn btn-default btn-success" href="#top" role="button">开始输入魔方</a></p>
+		<h3>手上没有魔方？别着急</h3>
+        <p><a id="getting_start_by_disrupt_cube" class="btn btn-default btn-success" href="#top" role="button">点击随机打乱魔方</a></p>
       </div>
+	  
+ 
 
       <div id="set_cube" step=-1 class="jumbotron" style="padding-right:5px; padding-left:5px; padding-top:5px; padding-bottom:15px;">
-      		<h3 style="margin:10px">“请耐心输入魔方哟”</h3>
+      		<h3 style="margin:10px" id="set_cube_title">“请按照你手上魔方的状态，耐心输入魔方哟”</h3>
+      		<p id="cube_disruptor_formula"></p>
       		<div id="cube1">
       			<ul>
 					<li class="cube row1 col1 pos1">
@@ -471,7 +514,7 @@
 				<input type="hidden" id="form_block_52" name="block[]" value="">
 				<input type="hidden" id="form_block_53" name="block[]" value="">
 
-				<a class="btn btn-default btn-primary" id="roll_back" role="button" style="width:60px;">倒退</a> &nbsp; <a id="start_resolve" class="btn btn-default btn-success" href="#step_0" nextstep=0 style="width:140px;">开始学习复原</a>
+				<a class="btn btn-default btn-primary" id="roll_back" role="button" style="width:60px;">倒退</a> &nbsp; <a id="start_resolve" class="btn btn-default btn-success" href="#top" nextstep=0 style="width:140px;">开始学习复原</a>
 				</form>
 			</div>
       </div>
@@ -481,7 +524,7 @@
         <p></p>
         <p class="lead"><b>1.块的概念、面的概念</b><br><img src="img/basic_concept.png" width="100%"></p>
         <p class="lead"><b>2.公式的概念</b><br><img src="img/formula.png" width="100%"><br>注意，存在这样的公式：F2，代表F面转180°，其中“2”表示连续做2个公式F。同样y2表示魔方整体沿U方向转180°</p>
-        <p><a id="getting_start" class="btn btn-default btn-success" href="#step_1" nextstep=1 role="button">开始复原</a></p>
+        <p><a id="getting_start" class="btn btn-default btn-success" href="#top" nextstep=1 role="button">开始复原</a></p>
       </div>
 
       <div class="modal fade" id="start_cube_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -519,6 +562,41 @@
   		</div>
 	</div>
 
+	<div class="modal fade" id="share_your_result" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  		<div class="modal-dialog">
+    		<div class="modal-content">
+      		<div class="modal-header">
+        		<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        		<h4 class="modal-title" id="myModalLabel">欢迎点击屏幕右上角分享 <img src="img/share_result.png"></h4>
+      		</div>
+      		<div class="modal-body" id="share_your_result_content">
+        		
+      		</div>
+      		<div class="modal-footer">
+        		<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+      		</div>
+    		</div>
+  		</div>
+	</div>
+
+	<div class="modal fade" id="share_your_result_by_pc" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  		<div class="modal-dialog">
+    		<div class="modal-content">
+      		<div class="modal-header bdsharebuttonbox">
+        		<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button><a href="#" class="bds_more" data-cmd="more"></a><a href="#" class="bds_qzone" data-cmd="qzone"></a><a href="#" class="bds_tsina" data-cmd="tsina"></a><a href="#" class="bds_tqq" data-cmd="tqq"></a><a href="#" class="bds_renren" data-cmd="renren"></a><a href="#" class="bds_weixin" data-cmd="weixin"></a>
+        		<h4 class="modal-title" id="myModalLabel">&lt;&lt;欢迎分享给好友</h4>
+      		</div>
+      		<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdPic":"","bdStyle":"0","bdSize":"16"},"share":{},"image":{"viewList":["qzone","tsina","tqq","renren","weixin"],"viewText":"分享到：","viewSize":"16"},"selectShare":{"bdContainerClass":null,"bdSelectMiniList":["qzone","tsina","tqq","renren","weixin"]}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+      		<div class="modal-body" id="share_your_result_content_by_pc">
+      		</div>
+
+      		<div class="modal-footer">
+        		<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+      		</div>
+    		</div>
+  		</div>
+	</div>
+
 	<div class="modal fade" id="step_skills" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
   		<div class="modal-dialog">
     		<div class="modal-content">
@@ -532,26 +610,32 @@
 				$content[] = "第2步：
 				<br> 1.在顶层找含有底面颜色（白色）的角块，然后通过顶层转动，将角块放在它目标位置的正上方，整个魔方沿y或y'转动，使得目标角块在F面与R面夹角。该过程，参考“调整公式”。
 				<br> 2.判断白色面朝向，分别为 朝前，朝右，朝上，根据下图，做相应的“复原公式”
+				<br><img src='img/step_skill_2.png' width='100%'>
 				<br> 3.若有角块藏在底层，可使用公式 (1)，将其置换到顶层";
 				$content[] = "第3步：
 				<br> 1.在顶层找不含有顶面色（黄色）的棱块，然后通过顶层转动，将棱块放在与其侧面颜色一致的中心块位置，整个魔方沿y或y'转动，使得该中心块面向自己。该过程，参考“调整公式”。
 				<br> 2.判断该棱块的目标位置是在左面，还是在右面，根据下图，做相应的“复原公式”
-				<br> 3.若有楞块藏在第二层，整个魔方沿y或y'转动，可使得目标棱块在F面与R面夹角，并使用公式 (1)，将其置换到顶层";
+				<br><img src='img/step_skill_3.png' width='100%'>
+				<br> 3.若有楞块藏在第二层，整个魔方沿y或y'转动，可使得目标棱块在F面与R面夹角，并使用公式 (2)，将其置换到顶层";
 				$content[] = "第4步：
 				<br> 1.下图为顶视图，图的正下方为前面，及朝向你的面，整个魔方沿y或y'转动，使得顶部黄色块图形与下图中其中任意一个一致。该过程，参考“调整公式”。
-				<br> 2.调整后，做相应的“复原公式”";
+				<br> 2.调整后，做如下的“复原公式”
+				<br><img src='img/step_skill_4.png' width='100%'>";
 				$content[] = "第5步：
 				<br> 1.下图为顶视图，图的正下方为前面，及朝向你的面，整个魔方沿y或y'转动，使得顶部黄色块图形与下图中其中任意一个一致，图中魔方四周的黄色条，代表角块中黄色面的朝向。该过程，参考“调整公式”。
-				<br> 2.调整后，做相应的“复原公式”";
+				<br> 2.调整后，做如下的“复原公式”
+				<br><img src='img/step_skill_5.png' width='100%'>";
 				$content[] = "第6步：
 				<br> 1.在顶层（第三层）的侧面（4个面），寻找一个侧面上，两个角块的颜色是一样的，找到后通过顶层转动，让该面朝向右手边。若全都不一样，则无需做该步骤。该过程，参考“调整公式”。
-				<br> 2.在做公示前，需执行公式x'调整魔方，将顶面翻向自己做前面。该过程，参考“调整公式”
+				<br> 2.在做公式前，需执行公式x'调整魔方，将顶面翻向自己做前面。该过程，参考“调整公式”
 				<br> 3.调整后，直接做“复原公式”。
-				<br> 4.做完公式后，恢复魔方姿态。该过程，参考“恢复调整公式”。
-				<br> 5.若4个侧面角块的颜色都一样，则通过顶层转动调整角块颜色与中心块一致。完成该步骤复原过程";
+				<br> 4.做完公式后，需执行公式x恢复魔方姿态。该过程，参考“恢复调整公式”。
+				<br> 5.若4个侧面角块的颜色都一样，则通过顶层转动调整角块颜色与中心块一致。完成该步骤复原过程
+				<br><img src='img/step_skill_6.png' width='100%'>";
 				$content[] = "第7步：
 				<br> 1.整个魔方沿y或y'转动，使得棱块中已复原的块背向自己（及在背面）。该过程，参考“调整公式”。
 				<br> 2.调整后。直接做“复原公式”。
+				<br><img src='img/step_skill_7.png' width='100%'>
 				<br> 3.若没有任何棱块是复原的，则无需调整魔方，直接做“复原公式”";
 				for($i=0; $i<7; $i++)
 				{
@@ -569,6 +653,8 @@
 	</div>
 
 <?php
+
+
 	$title = array();
 	$title[] = "第1步：复原第一层棱块";
 	$title[] = "第2步：复原第一层角块";
@@ -585,7 +671,7 @@
 	$end_title[] = "第4步也完成，这步有点简单，是不？！";
 	$end_title[] = "完成第5步，胜利更近一步！";
 	$end_title[] = "第6步搞定，加油！还有最后一步！";
-	$end_title[] = "恭喜你学会了用层先法复原魔方！后续练习，可以慢慢牢记“复原公式”哟";
+	$end_title[] = "恭喜你学会了用层先法复原魔方！后续练习，可以慢慢牢记‘复原公式’哟";
 
 
 	$button_title = "";
@@ -594,14 +680,9 @@
 
 	for($i=0; $i<7; $i++)
 	{
-		if($i<6) {
-			$button_title = "开始第".($i+2)."步";
-			$next_step_xml="href='#step_".($i+2)."' nextstep=".($i+2);
-		}
-		else {
-			$button_title = "分享给好友";
-			$next_step_xml="";
-		}
+		
+		$button_title = "开始第".($i+2)."步";
+		$next_step_xml="href='#step_".($i+2)."' nextstep=".($i+2);
 
 		if($i ==0)
 		{
@@ -615,7 +696,7 @@
         <p>
         	<table class="table table-bordered">
         		<tr id="step_<?php echo $i+1;?>_first_child">
-        			<td width="20%">复原目标</td>
+        			<td width="25%">复原目标</td>
         			<td><?php echo $img_xml;?></td>
         		</tr>
         		<!--<tr>
@@ -630,7 +711,18 @@
         </p>
         <h3>“<?php echo $end_title[$i];?>”</h3>
         <p></p>
-        <p><a id="start_step_<?php echo $i+2;?>" class="btn btn-default btn-success" role="button"<?php echo $next_step_xml;?>><?php echo $button_title;?></a></p>
+        <p>
+        <?php if ($i<6){?>
+        <a id="start_step_<?php echo $i+2;?>" class="btn btn-default btn-success" href="#top" role="button"<?php echo $next_step_xml;?>><?php echo $button_title;?></a>
+        <?php }else{
+        	if(isMobile()){?>
+        	<a id="share_result" class="btn btn-default btn-success" role="button" data-toggle="modal" data-target="#share_your_result">分享给好友</a>
+        	<?php }else{?>
+        	<a id="share_result_by_pc" class="btn btn-default btn-success" role="button" data-toggle="modal" data-target="#share_your_result_by_pc">分享给好友</a>
+        	
+		<?php }
+		}?>
+        </p>
       </div>
 <?php } ?>
    <!--   <div id="step_2" step=2 class="row marketing" style="text-align: left;">

@@ -3,11 +3,12 @@
 var start_x = 185 + ($(window).width() - 1366)/2;
 var start_y = 56;
 var cur_index = 0;
-var block_index = {
-
-};
+var start_time;
+var end_time;
+var waste_time = 0;
 
 $(document).ready(function(){
+    waste_time = 0;
 	$("#cube2").hide();
 	$("#roll_back").attr("disabled",true);
 	$("#start_resolve").attr("disabled","disabled");
@@ -15,10 +16,63 @@ $(document).ready(function(){
 	$("[step]").hide();
 	$(".step_skills").hide();
 	$("#step_naver").hide();
+	$("#restart").hide();
 	
 	$("#getting_start").click(function(){ 
 		$("#introduce").hide();
 		$("#set_cube").show();
+		$("#restart").show();
+	});
+
+	$("#share_result").click(function(){
+        if( waste_time == 0 ){
+		  var end_time = new Date();
+		  waste_time = Math.round((end_time.getTime() - start_time.getTime())/1000);
+        } 
+		min = Math.floor(waste_time / 60);
+		sec = waste_time % 60;
+
+		$(document).attr('title','我用' + min + '分钟' + sec + '秒学会了魔方复原，你也来试试！');
+		$("#share_your_result_content").html('你仅用了' + min + '分钟' + sec + '秒遍学会了复原魔方，太赞了！欢迎继续学习！记住去学习“本步骤技巧”哟，让你慢慢学会自己复原！');
+	});
+
+    $("#share_result_by_pc").click(function(){
+        if( waste_time == 0 ){
+          var end_time = new Date();
+          waste_time = Math.round((end_time.getTime() - start_time.getTime())/1000);
+        } 
+        min = Math.floor(waste_time / 60);
+        sec = waste_time % 60;
+
+        $(document).attr('title','我用' + min + '分钟' + sec + '秒学会了魔方复原，你也来试试！');
+        $("#share_your_result_content_by_pc").html('你仅用了' + min + '分钟' + sec + '秒遍学会了复原魔方，太赞了！欢迎继续学习！记住去学习“本步骤技巧”哟，让你慢慢学会自己复原！');
+    });
+
+	$("#getting_start_by_disrupt_cube").click(function(){ 
+		$.post("./cube_disruptor.php",function(result){
+			//alert(result);
+			formula_color = eval("("+result+")");
+			$("#set_cube_title").html("“打乱的魔方状态如下”");
+			$("#cube_disruptor_formula").html("（高手参考）打乱公式："+formula_color["formula"]);
+			cube_color = formula_color["cube_color"];
+			color_cnt = cube_color.length;
+			var color_map = {"R":"red","O":"oringe","G":"green","B":"blue","W":"white","Y":"yellow"};
+
+			for(i=0; i<color_cnt; i++){
+				console.log(color_map[cube_color[i]]);
+				$("#block_"+i).attr("class", color_map[cube_color[i]]);
+				$("#form_block_"+i).attr("value", color_map[cube_color[i]]);
+			}
+			$("#block_0").html("");
+
+			$("#introduce").hide();
+			$("#set_color").hide();
+			$("#roll_back").hide();
+			$("#cube2").show();
+			$("#set_cube").show();
+			$("#restart").show();
+			$("#start_resolve").attr("disabled",false);
+		});
 	});
 
 	$("[nextstep]").click(function(){ 
@@ -87,10 +141,13 @@ $(document).ready(function(){
  			if(color != "")
  				block_json.push(color);
  		});
+
+ 		start_time = new Date();
+
  
  		$.post("./cube_teacher.php",{block:block_json},function(result){
 			//alert(result);
-			formula_recorder = eval(result);
+			formula_recorder = eval("("+result+")");
 
         	step_cnt = formula_recorder.length;
         	//alert(step_cnt);
@@ -132,9 +189,7 @@ $(document).ready(function(){
  		//$("#step_1_first_child").after("<tr class='formula_tr'><td>复原<br><a class=target_block>红绿蓝[角块]</a></td><td>调整公式：<br>F U D U F U R<br>复原公式：<br>F U D U F U R</td></tr><tr class='formula_tr'><td>复原<br><a class=target_block>红绿蓝[角块]</a></td><td>调整公式：<br>F U D U F U R<br>复原公式：<br>F U D U F U R</td></tr><tr class='formula_tr'><td>复原<br><a class=target_block>红绿蓝[角块]</a></td><td>调整公式：<br>F U D U F U R<br>复原公式：<br>F U D U F U R</td></tr>");
     });
 
-    
-
-
+   
     /*$("#getting_start").click(function(){ 
     	$("#introduce").hide();
     	$("#introduce").hide();
