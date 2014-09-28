@@ -53,15 +53,15 @@ body { background: #fff }
 	
 /* GRADIENT */
 .green { background: #009900; }
-/*a:hover span.green { background: #009900!important; }
+a span.green:hover  { background: #00ee00!important;  cursor: pointer;}
 
-	.row1.col1.pos1 .green { background: -webkit-gradient(linear, right top, left top, from(#009900), to(#006900)); background: -moz-linear-gradient(right,  #009900,  #006900); }
+/*	.row1.col1.pos1 .green { background: -webkit-gradient(linear, right top, left top, from(#009900), to(#006900)); background: -moz-linear-gradient(right,  #009900,  #006900); }
 	.row2.col1.pos1 .green { background: -webkit-gradient(linear, right top, left top, from(#009900), to(#006900)); background: -moz-linear-gradient(right,  #009900,  #006900); }
 	.row3.col1.pos1 .green { background: -webkit-gradient(linear, right top, left top, from(#009900), to(#006900)); background: -moz-linear-gradient(right,  #009900,  #006900); }*/
 
 .red { background: #cf0c0c; }
-/*a:hover span.red { background: #cf0c0c!important; }
-	.row1.col3.pos3 .red { background: -webkit-gradient(linear, right top, left center, from(#860b0b), to(#b00e0e)); background: -moz-linear-gradient(right,  #860b0b,  #b00e0e); }
+a span.red:hover { background: #ef1c1c!important; cursor: pointer;}
+/*	.row1.col3.pos3 .red { background: -webkit-gradient(linear, right top, left center, from(#860b0b), to(#b00e0e)); background: -moz-linear-gradient(right,  #860b0b,  #b00e0e); }
 	.row2.col3.pos3 .red { background: -webkit-gradient(linear, right top, left center, from(#860b0b), to(#b00e0e)); background: -moz-linear-gradient(right,  #860b0b,  #b00e0e); }
 	.row3.col3.pos3 .red { background: -webkit-gradient(linear, right top, left center, from(#860b0b), to(#b00e0e)); background: -moz-linear-gradient(right,  #860b0b,  #b00e0e); }
 
@@ -70,8 +70,8 @@ body { background: #fff }
 	.row3.col3.pos2 .red { background: -webkit-gradient(linear, right top, left center, from(#b00e0e), to(#cf0c0c)); background: -moz-linear-gradient(right,  #b00e0e,  #cf0c0c); }*/
 
 .white { background: #fff; color: #333;}
-/*a:hover span.white { background: #fff!important; }
-	.row1.col1.pos3 .white { background: -webkit-gradient(linear, right top, left center, from(#cccccc), to(#eeeeee)); background: -moz-linear-gradient(right,  #cccccc,  #eeeeee); }
+a span.white:hover { background: #ccc!important;  cursor: pointer; }
+/*a	.row1.col1.pos3 .white { background: -webkit-gradient(linear, right top, left center, from(#cccccc), to(#eeeeee)); background: -moz-linear-gradient(right,  #cccccc,  #eeeeee); }
 	.row1.col2.pos3 .white { background: -webkit-gradient(linear, right top, left center, from(#dddddd), to(#f0f0f0)); background: -moz-linear-gradient(right,  #dddddd,  #f0f0f0); }
 	.row1.col3.pos3 .white { background: -webkit-gradient(linear, right top, left center, from(#dddddd), to(#ffffff)); background: -moz-linear-gradient(right,  #dddddd,  #ffffff); }
 
@@ -81,8 +81,11 @@ body { background: #fff }
 	.row1.col3.pos2 .white { background: -webkit-gradient(linear, right top, left center, from(#f9f9f9), to(#ffffff)); background: -moz-linear-gradient(right,  #f9f9f9,  #ffffff); }*/
 
 .blue { background: #0000cc; }
+a span.blue:hover { background: #2020ff!important;  cursor: pointer;}
 .oringe { background: #ff6c0c; }
+a span.oringe:hover { background: #ff8c2c!important;  cursor: pointer;}
 .yellow { background: #dddd00; color: #333;}
+a span.yellow:hover { background: #ffff00!important;  cursor: pointer;}
 
 .empty { background: #666; }
 
@@ -283,6 +286,10 @@ h3 {
 	color: #2a6496;
 	font-weight: bolder;
 	margin-bottom:10px;
+}
+
+.hint {
+	display:none;
 }
 
 #button_area .btn{

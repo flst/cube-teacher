@@ -6,16 +6,44 @@
 
 include "cube_base_class.php";
 
+function CheckSubstrs($substrs,$text){
+        foreach($substrs as $substr)
+            if(false!==strpos($text,$substr)){
+            return true;
+        }
+        return false;
+}
+
+
+function isMobile(){
+    $useragent=isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : '';
+    $useragent_commentsblock=preg_match('|\(.*?\)|',$useragent,$matches)>0?$matches[0]:'';
+    
+    $mobile_os_list=array('Google Wireless Transcoder','Windows CE','WindowsCE','Symbian','Android','armv6l','armv5','Mobile','CentOS','mowser','AvantGo','Opera Mobi','J2ME/MIDP','Smartphone','Go.Web','Palm','iPAQ');
+    $mobile_token_list=array('Profile/MIDP','Configuration/CLDC-','160×160','176×220','240×240','240×320','320×240','UP.Browser','UP.Link','SymbianOS','PalmOS','PocketPC','SonyEricsson','Nokia','BlackBerry','Vodafone','BenQ','Novarra-Vision','Iris','NetFront','HTC_','Xda_','SAMSUNG-SGH','Wapaka','DoCoMo','iPhone','iPod');
+ 
+    $found_mobile=CheckSubstrs($mobile_os_list,$useragent_commentsblock) ||
+    CheckSubstrs($mobile_token_list,$useragent);
+ 
+    if ($found_mobile){
+        return true;
+    }else{
+        return false;
+    }
+}
+
 class FormulaItem {
     var $_target_name;
     var $_target_type;
     var $_set_formula;
     var $_exe_formula;
     var $_unti_set_formula;
+    var $_finish_png;
 
-    function __construct($set_formula, $exe_formula, $target_name, $target_type, $unti_set_formula="") {
+    function __construct($set_formula, $exe_formula, $finish_png, $target_name, $target_type, $unti_set_formula="") {
         $this->_set_formula = trim($set_formula);
         $this->_exe_formula = trim($exe_formula);
+        $this->_finish_png = trim($finish_png);
         $this->_target_name = trim($target_name);
         $this->_target_type = trim($target_type);
         $this->_unti_set_formula = trim($unti_set_formula);
@@ -23,13 +51,30 @@ class FormulaItem {
 
     function gen_array() {
         $formula_array = array();
-        $formula_array["set_f"] = $this->_set_formula;
-        $formula_array["exe_f"] = $this->_exe_formula;
-        $formula_array["unti_set_f"] = $this->_unti_set_formula;
+        $formula_array["set_f"] = $this->text2png($this->_set_formula);
+        $formula_array["exe_f"] = $this->text2png($this->_exe_formula);
+        $formula_array["png"] = $this->_finish_png;
+        $formula_array["unti_set_f"] = $this->text2png($this->_unti_set_formula);
         $formula_array["t_name"] = $this->_target_name;
         $formula_array["t_type"] = $this->_target_type;
         return $formula_array;
     }
+
+    function text2png($text) {
+        if($text=="")
+            return "";
+        $png_xml = "";
+        $formula_list = explode(" ",$text);
+        foreach ($formula_list as $f) {
+            //$f = str_replace("'","\'",$f);
+            $width = 65;
+            if(isMobile())
+                $width = 40;
+            $png_xml = $png_xml."<img src=\"img/formula/".$f.".png\" width=\"".$width."\">";
+        }
+        return $text."<br>".$png_xml;
+    }
+
 }
 
 class FormulaRecorder {
@@ -47,6 +92,11 @@ class FormulaRecorder {
 
     function recorder_formula($step, $formula_item) {
         $this->_formula[$step][] = $formula_item->gen_array();
+    }
+
+    function set_last_record_finish_png($step, $finish_png) {
+        $cnt = count($this->_formula[$step]);
+        $this->_formula[$step][$cnt-1]["png"] = $finish_png;
     }
 
     function gen_json_output() {
@@ -119,6 +169,13 @@ class CubeResolver {
                 return false;
         }
         return true;
+    }
+
+    function get_cube_png() {
+        $cube_colors = $this->_cube->get_cube_color_array();
+        $cube_printer = new CubePrinter($cube_colors,20);
+
+        return $cube_printer->get_base64_xml();
     }
 
     function depth_first_search($depth, $max_depth, $step) {
@@ -207,7 +264,7 @@ class CubeResolver {
                     $this->execute_formula_by_string($axis_formula_unti_set[$i]);
                 }
 
-                $set_formula = $set_formula."R U R'";
+                $set_formula = $set_formula."R U R' ";
                 $this->execute_formula(array("R", "U", "R'"));   
             }
          
@@ -250,7 +307,7 @@ class CubeResolver {
             $this->execute_formula_by_string($exe_formula);
             //echo "执行公式：".$exe_formula."<br>";
 
-            $formula_item = new FormulaItem($set_formula, $exe_formula, $block->get_disp_name(), "角块");
+            $formula_item = new FormulaItem($set_formula, $exe_formula, $this->get_cube_png(), $block->get_disp_name(), "角块");
             $this->_formula_recorder->recorder_formula(1, $formula_item);
         }
     }
@@ -338,7 +395,7 @@ class CubeResolver {
             $this->execute_formula_by_string($exe_formula);
             //echo "执行公式：".$exe_formula."<br>";
 
-            $formula_item = new FormulaItem($set_formula, $exe_formula, $block->get_disp_name(), "棱块");
+            $formula_item = new FormulaItem($set_formula, $exe_formula, $this->get_cube_png(), $block->get_disp_name(), "棱块");
             $this->_formula_recorder->recorder_formula(2, $formula_item);
         }
     }
@@ -359,28 +416,28 @@ class CubeResolver {
             if (count($block_list) == 2) {
                 if ($block_list[0]->get_y() == 0 && $block_list[1]->get_y() == 0) {
                     //echo "调整魔方: y<br>";
-                    $set_formula = "y";
-                    $this->_cube->turn("y");
+                    $set_formula = "U";
+                    $this->_cube->turn("U");
                 }
                 else if ($block_list[0]->get_x() + $block_list[0]->get_y() + $block_list[1]->get_x() + $block_list[1]->get_y() == -2) {
                     //echo "调整魔方: y2<br>";
-                    $set_formula = "y2";
-                    $this->_cube->turn("y");
-                    $this->_cube->turn("y");
+                    $set_formula = "U2";
+                    $this->_cube->turn("U");
+                    $this->_cube->turn("U");
                 }
                 else if ($block_list[0]->get_x() + $block_list[0]->get_y() + $block_list[1]->get_x() + $block_list[1]->get_y() == 0) {
                     foreach ($block_list as $b) {
                         if ($b->get_y() == 0) {
                             if ($b->get_x() == -1) {
                                 //echo "调整魔方: y<br>";
-                                $set_formula = "y";
-                                $this->_cube->turn("y");
+                                $set_formula = "U";
+                                $this->_cube->turn("U");
                                 break;
                             }
                             if ($b->get_x() == 1) {
                                 //echo "调整魔方: y'<br>";
-                                $set_formula = "y'";
-                                $this->_cube->turn("y'");
+                                $set_formula = "U'";
+                                $this->_cube->turn("U'");
                                 break;
                             }
                         } 
@@ -391,7 +448,7 @@ class CubeResolver {
             $this->execute_formula_by_string($exe_formula);
             //echo "执行公式：".$exe_formula."<br>";
 
-            $formula_item = new FormulaItem($set_formula, $exe_formula, "", "");
+            $formula_item = new FormulaItem($set_formula, $exe_formula, $this->get_cube_png(), "", "");
             $this->_formula_recorder->recorder_formula(3, $formula_item);
         }
     }
@@ -422,49 +479,49 @@ class CubeResolver {
                
             if (count($ok_block_list) == 1)
                 //set axis y ori
-                for ($i=0; $i<count($axis_formula_set); $i++) {
-                    $this->execute_formula_by_string($axis_formula_set[$i]);
+                for ($i=0; $i<count($formula_set); $i++) {
+                    $this->execute_formula_by_string($formula_set[$i]);
                     if ($ok_block_list[0]->get_x() == 1 && $ok_block_list[0]->get_y() == -1) {
-                        $set_formula = $set_formula.$axis_formula_set[$i]." ";
+                        $set_formula = $set_formula.$formula_set[$i]." ";
                         break;
                     }
-                    $this->execute_formula_by_string($axis_formula_unti_set[$i]);
+                    $this->execute_formula_by_string($formula_unti_set[$i]);
                 }
 
             if (count($ok_block_list) == 2) {
                 if ($not_ok_block_list[0]->get_face("Y") == $not_ok_block_list[1]->get_face("Y")) {
                     //set axis y ori
-                    for ($i=0; $i<count($axis_formula_set); $i++) {
-                        $this->execute_formula_by_string($axis_formula_set[$i]);
+                    for ($i=0; $i<count($formula_set); $i++) {
+                        $this->execute_formula_by_string($formula_set[$i]);
                         if ($not_ok_block_list[0]->get_face("Y") == 1) {
-                            $set_formula = $set_formula.$axis_formula_set[$i]." ";
+                            $set_formula = $set_formula.$formula_set[$i]." ";
                             break;
                         }
-                        $this->execute_formula_by_string($axis_formula_unti_set[$i]);
+                        $this->execute_formula_by_string($formula_unti_set[$i]);
                     }
                 }
 
                 if ($not_ok_block_list[0]->get_face("Y") == -1 * $not_ok_block_list[1]->get_face("Y")) {
                     //set axis y ori
-                    for ($i=0; $i<count($axis_formula_set); $i++) {
-                        $this->execute_formula_by_string($axis_formula_set[$i]);
+                    for ($i=0; $i<count($formula_set); $i++) {
+                        $this->execute_formula_by_string($formula_set[$i]);
                         if (abs($not_ok_block_list[0]->get_face("Y")) == 1 && $not_ok_block_list[0]->get_y() == -1) {
-                            $set_formula = $set_formula.$axis_formula_set[$i]." ";
+                            $set_formula = $set_formula.$formula_set[$i]." ";
                             break;
                         }
-                        $this->execute_formula_by_string($axis_formula_unti_set[$i]);
+                        $this->execute_formula_by_string($formula_unti_set[$i]);
                     }
                 }
 
                 if (abs($not_ok_block_list[0]->get_face("Y")) != abs($not_ok_block_list[1]->get_face("Y"))) {
                     //set axis y ori
-                    for ($i=0; $i<count($axis_formula_set); $i++) {
-                        $this->execute_formula_by_string($axis_formula_set[$i]);
+                    for ($i=0; $i<count($formula_set); $i++) {
+                        $this->execute_formula_by_string($formula_set[$i]);
                         if ($not_ok_block_list[0]->get_face("Y") + $not_ok_block_list[1]->get_face("Y") == 3) {
-                            $set_formula = $set_formula.$axis_formula_set[$i]." ";
+                            $set_formula = $set_formula.$formula_set[$i]." ";
                             break;
                         }
-                        $this->execute_formula_by_string($axis_formula_unti_set[$i]);
+                        $this->execute_formula_by_string($formula_unti_set[$i]);
                     }
                 }
             }
@@ -475,26 +532,26 @@ class CubeResolver {
                 
                 if ($tmp_var == 0) {
                     if (abs($not_ok_block_list[0]->get_face("Y")) == 1) {
-                        $this->execute_formula_by_string("y");
-                        $set_formula = $set_formula."y ";
+                        $this->execute_formula_by_string("U");
+                        $set_formula = $set_formula."U ";
                     }
                 }
                 else {
                     //get two same face block
                     $cur_face = $tmp_var / 2 ;
                     if ($cur_face == 1) {
-                        $this->execute_formula_by_string("y");
-                        $set_formula = $set_formula."y ";
+                        $this->execute_formula_by_string("U");
+                        $set_formula = $set_formula."U ";
                     }
                     
                     if ($cur_face == 2) {
-                        $this->execute_formula_by_string("y2");
-                        $set_formula = $set_formula."y2 ";
+                        $this->execute_formula_by_string("U2");
+                        $set_formula = $set_formula."U2 ";
                     }
                 
                     if ($cur_face == -1) {
-                        $this->execute_formula_by_string("y'");
-                        $set_formula = $set_formula."y' ";
+                        $this->execute_formula_by_string("U'");
+                        $set_formula = $set_formula."U' ";
                     }
                 }
             }
@@ -505,7 +562,7 @@ class CubeResolver {
             $this->execute_formula_by_string($exe_formula);
             //echo "执行公式：".$exe_formula."<br>";
 
-            $formula_item = new FormulaItem($set_formula, $exe_formula, "", "");
+            $formula_item = new FormulaItem($set_formula, $exe_formula, $this->get_cube_png(), "", "");
             $this->_formula_recorder->recorder_formula(4, $formula_item);
         }
     }
@@ -558,7 +615,7 @@ class CubeResolver {
                     //print $block->get_name(), $block->get_x(), $block->get_y(), $block->get_z(), $block->get_tx(), $block->get_ty(), $block->get_tz()
                     if ($this->_cube->find_block_by_name("RGY")->is_recover()) {
                         //echo "顶层角块复原完毕，现调整到最终位置，公式为: ".$formula_set[$i]."<br>";
-                        $formula_item = new FormulaItem($formula_set[$i], "", "", "");
+                        $formula_item = new FormulaItem($formula_set[$i], "", $this->get_cube_png(), "", "");
                         $this->_formula_recorder->recorder_formula(5, $formula_item);
                         break;
                     }
@@ -593,7 +650,7 @@ class CubeResolver {
             $this->execute_formula_by_string("x");
             //echo "做完公式恢复原始魔方姿态，公式为: x <br>";
 
-            $formula_item = new FormulaItem($set_formula, $exe_formula, "", "", "x");
+            $formula_item = new FormulaItem($set_formula, $exe_formula, $this->get_cube_png(), "", "", "x");
             $this->_formula_recorder->recorder_formula(5, $formula_item);
         }
     }
@@ -643,7 +700,7 @@ class CubeResolver {
             $this->execute_formula_by_string($exe_formula);
             //echo "执行公式：".$exe_formula."<br>";
 
-            $formula_item = new FormulaItem($set_formula, $exe_formula, "", "");
+            $formula_item = new FormulaItem($set_formula, $exe_formula, $this->get_cube_png(), "", "");
             $this->_formula_recorder->recorder_formula(6, $formula_item);
         }
     }
@@ -701,6 +758,9 @@ class CubeResolver {
         }
         $this->_formula_stack = $tmp_formula_stack;
         
+        if(count($this->_formula_stack) == 0)
+            return $this->_formula_stack;
+
         //record formula
         $formula_stack_str = "";
         foreach ($this->_formula_stack as $b) {
@@ -709,7 +769,7 @@ class CubeResolver {
         $tmp_len = count($this->_resolver_condition[$step]);
         $tmp_name = $this->_resolver_condition[$step][$tmp_len-1];
         $block = $this->_cube->find_block_by_name($tmp_name);
-        $formula_item = new FormulaItem("", $formula_stack_str, $block->get_disp_name(), "棱块");
+        $formula_item = new FormulaItem("", $formula_stack_str, "", $block->get_disp_name(), "棱块");
         $this->_formula_recorder->recorder_formula(0, $formula_item);
 
         //print "turn time: ", $this->_cube->turn_time
@@ -731,7 +791,11 @@ if (isset($_POST["block"])) {
     $block_color = $_POST["block"];
     //print_r($block_color);
     $is_ajax_post = true;
-    $magic_cube->set_cube_color($block_color);
+    if(!$magic_cube->set_cube_color($block_color)) {
+        $err_json = array("error"=>"input error");
+        echo json_encode($err_json);
+        exit;
+    }
 }
 else{
 ?>
@@ -776,10 +840,16 @@ $formula_recorder = new FormulaRecorder();
 //echo "<br>=====第一步，还原底层（十字）棱块=====<br>";
 $cube_rsl = new CubeResolver($magic_cube_cross, $formula_recorder);
 //start = time.clock()
-$cube_opt->execute_formula($cube_rsl->resolver_step("first_cross"));
-$cube_opt->execute_formula($cube_rsl->resolver_step("secend_cross"));
-$cube_opt->execute_formula($cube_rsl->resolver_step("third_cross"));
-$cube_opt->execute_formula($cube_rsl->resolver_step("fouth_cross"));
+
+foreach (array('first_cross', 'secend_cross', 'third_cross', 'fouth_cross') as $step) {
+    $formula = $cube_rsl->resolver_step($step);
+    if (count($formula)!=0) {
+        $cube_opt->execute_formula($formula);
+        $cube_colors = $magic_cube->get_cube_color_array();
+        $cube_printer = new CubePrinter($cube_colors,20);
+        $formula_recorder->set_last_record_finish_png(0, $cube_printer->get_base64_xml());
+    }
+}
 
 $cube_rsl = new CubeResolver($magic_cube, $formula_recorder);
 //step 2, 1st layer corner

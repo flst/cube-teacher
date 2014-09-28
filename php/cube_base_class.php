@@ -523,16 +523,26 @@ class MagicCube {
             }
         }
 
+        $all_block_find = array();
+
         #set name, then get target position and color face
         foreach($tmp_block as $b) {
             $b->gen_name();
-            //echo $b->get_name()." ";
+            if (!in_array($b->get_name(), $all_block_find)) {
+                $all_block_find[] = $b->get_name();
+            }
+            //echo $b->get_name()."<br>";
             $tb = $this->find_block_by_name($b->get_name());
+            
             $b->set_target($tb);
             //echo $b->get_tic()." ".$b->get_tjc()." ".$b->get_tkc()." ".$b->get_tx()." ".$b->get_ty()." ".$b->get_tz()." ".$b->get_ti()." ".$b->get_tj()." ".$b->get_tk()."<br>";
         }
 
+        if (count($all_block_find) != 26)
+            return false;
+
         $this->_block = $tmp_block;
+        return true;
     }
 
     function to_cross_cube() {
@@ -548,6 +558,7 @@ class MagicCube {
         foreach($this->_block as $b)
             if ($name == $b->get_name())
                 return $b;
+        return "";
     }
 
     function get_block_list() {
@@ -610,7 +621,7 @@ class MagicCube {
         $this->print_face("B");
     }
 
-    function get_cube_by_json() {
+    function get_cube_color_array() {
         $this->gen_display_matrix();
         $cube_json = array();
         $face_set = array("U","F","R","D","L","B");
@@ -744,5 +755,163 @@ class CubeOperator {
         $this->execute_formula($formula);
     }
 }
+
+class Disruptor {
+    var $_disr_formula;
+    function __construct($formula_len) {
+        $formula_set = array("F","F'","F2","B","B'","B2","R","R'","R2","L","L'","L2","U","U'","U2","D","D'","D2");
+        $last_index = -1;
+        $this->_disr_formula = "";
+        for($i=0; $i<$formula_len; $i++) {
+            $rand_index = rand(0,5);
+            //echo $rand_index."<br>";
+            while ( $rand_index/2 == $last_index ) {
+                $rand_index = rand(0,5);
+                //echo $rand_index."<br>";
+            }
+            $last_index = $rand_index/2;
+            $son_index = rand(0,2);
+            $this->_disr_formula = $this->_disr_formula.$formula_set[$rand_index*3+$son_index]." ";
+        }
+
+        $this->_disr_formula = trim($this->_disr_formula);
+    }
+
+    function get_formula() {
+        return $this->_disr_formula;
+    }
+}
+
+class CubePrinter {
+    var $_side_len;
+    var $_image;
+    var $_cube_width;
+    var $_cube_height;
+    var $_colors;
+    var $_rgb;
+    var $_block_spacing;
+
+    function __construct($colors, $side_len = 20) {
+        $this->_colors = $colors;
+        $this->_side_len = $side_len;
+        $this->_block_spacing = $side_len*0.05;
+        $this->_cube_width = $this->_side_len*1.6*3+$this->_block_spacing*1.6*4;
+        $this->_cube_height = $this->_side_len*2*3+$this->_block_spacing*2*3;
+
+        $this->_image = ImageCreate($this->_cube_width, $this->_cube_height);       
+        //设置背景颜色
+        $bgcolor = imagecolorallocate($this->_image,255,255,255);
+        imagecolortransparent($this->_image,$bgcolor);
+        imagefill($this->_image,0,0,$bgcolor);
+
+        //设置颜色
+        $this->_rgb = array();
+        $this->_rgb["R"] = imagecolorallocate($this->_image,255,0,0);
+        $this->_rgb["Y"] = imagecolorallocate($this->_image,255,255,0);
+        $this->_rgb["G"] = imagecolorallocate($this->_image,0,255,0);
+        $this->_rgb["O"] = imagecolorallocate($this->_image,255,108,12);
+        $this->_rgb["B"] = imagecolorallocate($this->_image,0,0,255);
+        $this->_rgb["W"] = imagecolorallocate($this->_image,255,255,255);
+        $this->_rgb["SIDE"] = imagecolorallocate($this->_image,150,150,150);
+
+        $this->draw_up();
+        $this->draw_front();
+        $this->draw_right();
+    }
+
+    function draw_up() {
+        $up_colors = array_slice($this->_colors,0, 9);
+        $start_x = 0;
+        $start_y = $this->_cube_height * 0.25;
+        $start_offset_x = $this->_side_len * 0.8 + $this->_block_spacing;
+        $start_offset_y = $this->_side_len * 0.5 + $this->_block_spacing;
+        $points_offset = array($this->_side_len * 0.8, $this->_side_len * 0.5, 
+            $this->_side_len * 1.6, 0, $this->_side_len * 0.8, $this->_side_len * -1 * 0.5);
+
+        foreach ($up_colors as $i => $color) {
+            $cur_start_x = $start_x + (floor($i / 3) + $i % 3) * $start_offset_x;
+            $cur_start_y = $start_y + (floor($i / 3) - ($i % 3)) * $start_offset_y;
+
+            $cur_points = array();
+            $cur_points[] = $cur_start_x;
+            $cur_points[] = $cur_start_y;
+            $cur_points[] = $points_offset[0] + $cur_start_x;
+            $cur_points[] = $points_offset[1] + $cur_start_y;
+            $cur_points[] = $points_offset[2] + $cur_start_x;
+            $cur_points[] = $points_offset[3] + $cur_start_y;
+            $cur_points[] = $points_offset[4] + $cur_start_x;
+            $cur_points[] = $points_offset[5] + $cur_start_y;
+
+            imagefilledpolygon($this->_image, $cur_points, 4, $this->_rgb[$color]);
+            imagepolygon($this->_image, $cur_points, 4, $this->_rgb["SIDE"]);
+        }
+    }
+
+    function draw_front() {
+        $front_colors = array_slice($this->_colors,9, 9);
+        $start_x = 0;
+        $start_y = $this->_cube_height * 0.25;
+        $start_offset_x = $this->_side_len * 0.8 + $this->_block_spacing;
+        $start_offset_y = $this->_side_len * 1 + $this->_block_spacing;
+        $points_offset = array(0, $this->_side_len, $this->_side_len * 0.8, $this->_side_len*1.5, 
+            $this->_side_len * 0.8, $this->_side_len*0.5);
+
+        foreach ($front_colors as $i => $color) {
+            $cur_start_x = $start_x + ($i % 3) * $start_offset_x;
+            $cur_start_y = $start_y + (floor($i / 3) + ($i % 3)*0.5) * $start_offset_y;
+
+            $cur_points = array();
+            $cur_points[] = $cur_start_x;
+            $cur_points[] = $cur_start_y;
+            $cur_points[] = $points_offset[0] + $cur_start_x;
+            $cur_points[] = $points_offset[1] + $cur_start_y;
+            $cur_points[] = $points_offset[2] + $cur_start_x;
+            $cur_points[] = $points_offset[3] + $cur_start_y;
+            $cur_points[] = $points_offset[4] + $cur_start_x;
+            $cur_points[] = $points_offset[5] + $cur_start_y;
+
+            imagefilledpolygon($this->_image, $cur_points, 4, $this->_rgb[$color]);
+            imagepolygon($this->_image, $cur_points, 4, $this->_rgb["SIDE"]);
+        }
+    }
+
+    function draw_right() {
+        $right_colors = array_slice($this->_colors,18, 9);
+        $start_x = $this->_cube_width * 0.5;
+        $start_y = $this->_cube_height * 0.5;
+        $start_offset_x = $this->_side_len * 0.8 + $this->_block_spacing;
+        $start_offset_y = $this->_side_len * 1 + $this->_block_spacing;
+        $points_offset = array(0, $this->_side_len, $this->_side_len * 0.8, $this->_side_len*0.5, 
+            $this->_side_len * 0.8, -1 * $this->_side_len * 0.5);
+
+        foreach ($right_colors as $i => $color) {
+            $cur_start_x = $start_x + ($i % 3) * $start_offset_x;
+            $cur_start_y = $start_y + (floor($i / 3) - ($i % 3)*0.5) * $start_offset_y;
+
+            $cur_points = array();
+            $cur_points[] = $cur_start_x;
+            $cur_points[] = $cur_start_y;
+            $cur_points[] = $points_offset[0] + $cur_start_x;
+            $cur_points[] = $points_offset[1] + $cur_start_y;
+            $cur_points[] = $points_offset[2] + $cur_start_x;
+            $cur_points[] = $points_offset[3] + $cur_start_y;
+            $cur_points[] = $points_offset[4] + $cur_start_x;
+            $cur_points[] = $points_offset[5] + $cur_start_y;
+
+            imagefilledpolygon($this->_image, $cur_points, 4, $this->_rgb[$color]);
+            imagepolygon($this->_image, $cur_points, 4, $this->_rgb["SIDE"]);
+        }
+    }
+
+    function get_base64_xml() {
+        //把字符串写在图像左上角               
+        ob_start();
+        imagepng($this->_image);
+        $data =ob_get_contents();
+        ob_end_clean();
+        return '<img src="data:image/png;base64,'.base64_encode($data).'">';
+    }
+}
+
 
 ?>
