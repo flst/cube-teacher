@@ -6,6 +6,7 @@ var cur_index = 0;
 var start_time;
 var end_time;
 var waste_time = 0;
+var disrupt_mode = false;
 
 document.addEventListener('dblclick', function(e){
         e.preventDefault();
@@ -24,6 +25,7 @@ $(document).ready(function(){
 
 
 	$("#getting_start").click(function(){ 
+        disrupt_mode = false;
 		$("#introduce").hide();
 		$("#set_cube").show();
 		$("#restart").show();
@@ -55,6 +57,7 @@ $(document).ready(function(){
     });
 
 	$("#getting_start_by_disrupt_cube").click(function(){ 
+        disrupt_mode = true;
         $('#basic_concept').modal('show');
 		$.post("./cube_disruptor.php",function(result){
 			//alert(result);
@@ -140,6 +143,9 @@ $(document).ready(function(){
     });
 
     $("span[id^='block_']").click(function(){
+        if (disrupt_mode)
+            return; 
+        
         if($(this).attr('class') != "fill") {
             index = $(this).attr('id').split('_')[1];
             //alert(index);
