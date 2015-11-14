@@ -5,11 +5,11 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="keywords" content="魔方，复原，还原，教程，教学，公式，图解，口诀，最强魔方教程">
-    <meta name="description" content="这是一款三阶魔方初学者教学软件，可以手把手像一位老师一样，一步一步的教你复原魔方">
+    <meta name="keywords" content="魔方，复原，还原，教程，教学，公式，图解，口诀，最强魔方教程, 魔方教程">
+    <meta name="description" content="这是一款三阶魔方初学者教学软件（魔方教程），可以手把手像一位老师一样，一步一步的教你复原魔方">
     <meta name="author" content="sunweiwei">
-    <meta http-equiv=”Cache-Control” content=”no-transform” />
-    <meta http-equiv=”Cache-Control” content=”no-siteapp” />
+    <meta http-equiv="Cache-Control" content="no-transform" />
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
     <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0" />
     <link rel="SHORTCUT ICON" href="../img/webicon.ico">
 
@@ -90,8 +90,8 @@ function isMobile(){
         <p class="lead">1.约需用2分钟，将魔方状态输入软件<br><img src="img/input_method.png" width="100%"></p>
         <p class="lead">2.软件用层先法(7大步)解魔方，并一步一步教给您复原<br><img src="img/steps.png" width="100%"></p>
         <p class="lead">3.新手在复原过程中，在屏幕下方，可以点击“公式图例”查看公式并强化记忆，可点击“本步骤技巧”，学习当前步骤的复原技巧，以最终做到脱离该教程自己复原！<br><img src="img/tips.png" width="100%"></p>
-        <p class="lead">4.按照本软件提供的方法，要做到脱离教程复原，只需要记忆9个公式，而这9个公式很多做法是对称的，9个公式加起来的信息记忆量不及一首七言律诗！：）简单吧！<br></p>
-        <p class="lead">5.我们还在努力完善功能中，有任何问题欢迎反馈到flst@qq.com，感谢支持！<br>
+        <p class="lead">4.按照本软件提供的方法，要做到脱离魔方教程复原，只需要记忆9个公式，而这9个公式很多做法是对称的，9个公式加起来的信息记忆量不及一首七言律诗！：）简单吧！<br></p>
+        <p class="lead">5.我们的魔方教程还在努力完善功能中，有任何问题欢迎反馈到flst@qq.com，感谢支持！<br>
         <p class="lead"><b><font color="#ff0000">6.只要您有耐心，慢慢学与做，我相信该软件一定能教会您，加油！</font></b><br></p>
         <hr>
 
@@ -777,9 +777,15 @@ function isMobile(){
         	<a id="share_result" class="btn btn-default btn-success" role="button" data-toggle="modal" data-target="#share_your_result">分享给微信好友</a>
         	<?php }else{?>
         	<a id="share_result_by_pc" class="btn btn-default btn-success" role="button" data-toggle="modal" data-target="#share_your_result_by_pc">分享给微信好友</a>
-		<?php }
-		}?>
+		<?php }?>
+		<br/>
+		<br/>
+        <p><h3>给软件作者提建议</h3></p>
+        <p><textarea id="feedback_text" style="width:100%" rows="3"></textarea></p>
+        <p><a id="submit_feedback" class="btn btn-default btn-success" role="button">提交建议</a></p>
+		<?php }?>
         </p>
+        
       </div>
 <?php } ?>
    <!--   <div id="step_2" step=2 class="row marketing" style="text-align: left;">

@@ -22,6 +22,7 @@ $(document).ready(function(){
 	$(".step_skills").hide();
 	$("#step_naver").hide();
 	$("#restart").hide();
+    //$("#step_7").show();
 
 
 	$("#getting_start").click(function(){ 
@@ -305,4 +306,18 @@ $(document).ready(function(){
     	$("#introduce").hide();
     	$("#introduce").hide();
     });*/
+
+    $("#submit_feedback").click(function(){
+        //console.log($("#feedback_text").attr("value"));
+        var text = $("#feedback_text").attr("value");
+        if(text != ""){
+             $.post("./feedback_submit.php",{feedback_text:text},function(result){
+                //alert(result);
+                //ret = eval("("+result+")");
+                //console.log(result); 
+                $("#feedback_text").attr("value",""); 
+                alert("提交成功！");
+            });   
+        } 
+    });
 });
