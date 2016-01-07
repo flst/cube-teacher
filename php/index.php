@@ -781,8 +781,13 @@ function isMobile(){
 		<br/>
 		<br/>
         <p><h3>给软件作者提建议</h3></p>
+
+        <p>昵称：<input id="nickname" type="input"></input>&nbsp;&nbsp;邮箱：<input id="email" type="input"></input></p>
+        <br/>
         <p><textarea id="feedback_text" style="width:100%" rows="3"></textarea></p>
         <p><a id="submit_feedback" class="btn btn-default btn-success" role="button">提交建议</a></p>
+        <br/>
+        <p>也可以直接给我发送电子邮件：flst@qq.com ，我会尽力改进</p>
 		<?php }?>
         </p>
         

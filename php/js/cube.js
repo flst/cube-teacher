@@ -310,8 +310,10 @@ $(document).ready(function(){
     $("#submit_feedback").click(function(){
         //console.log($("#feedback_text").attr("value"));
         var text = $("#feedback_text").attr("value");
+        var nickname = $("#nickname").attr("value");
+        var email = $("#email").attr("value");
         if(text != ""){
-             $.post("./feedback_submit.php",{feedback_text:text},function(result){
+             $.post("./feedback_submit.php",{nickname:nickname,email:email,feedback_text:text},function(result){
                 //alert(result);
                 //ret = eval("("+result+")");
                 //console.log(result); 

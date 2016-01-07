@@ -24,7 +24,7 @@ include_once("inc/conn.php");
 $sql="select * from ct_feedback";
 $result = mysql_query($sql);
 while ( $row = mysql_fetch_array($result) ) {
-  echo("<P>" . $row["feedback"] . "</P>");
+  echo("<P>" . $row["nickname"] . "&nbsp;&nbsp;". $row["email"] ."&nbsp;&nbsp;" . $row["feedback"] . "</P>");
 }
 
 ?>
