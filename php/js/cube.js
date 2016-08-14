@@ -96,6 +96,7 @@ $(document).ready(function(){
 		{
 			$('#start_cube_modal').modal('show');
 			$("#step_naver").show();
+            $("#footer_content").hide();
 		}
 		$(".step_skills").hide();
 		$("#skill_"+next_step).show();

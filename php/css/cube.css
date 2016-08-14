@@ -313,6 +313,19 @@ formula {
 	line-height: 22px;
 }
 
+.navbar{
+  background-color: rgba(248,248,248,0.7);/* IE9、标准浏览器、IE6和部分IE7内核的浏览器(如QQ浏览器)会读懂 */
+}
+
+@media \0screen\,screen\9 {/* 只支持IE6、7、8 */
+  .navbar{
+    background-color:#f8f8f8;
+    filter:Alpha(opacity=70);
+    position:static; /* IE6、7、8只能设置position:static(默认属性) ，否则会导致子元素继承Alpha值 */
+    *zoom:1; /* 激活IE6、7的haslayout属性，让它读懂Alpha */
+  } 
+}
+
 /*.tips:after {
 	content: "\00a0";
 	bottom: 100%;

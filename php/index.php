@@ -637,7 +637,8 @@ function isMobile(){
   		<div class="modal-dialog">
     		<div class="modal-content">
       		<div class="modal-header bdsharebuttonbox">
-        		<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>欢迎分享给微信好友</h4>
+        		<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+				<h4 class="modal-title" id="myModalLabel">欢迎分享给微信好友</h4>
       		</div>
       		
       		<div class="modal-body" id="share_your_result_content_by_pc">
@@ -655,7 +656,8 @@ function isMobile(){
   		<div class="modal-dialog">
     		<div class="modal-content">
       		<div class="modal-header bdsharebuttonbox">
-        		<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>给软件作者提建议</h4>
+        		<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        		<h4 class="modal-title" id="myModalLabel">给软件作者提建议</h4>
       		</div>
       		
       		<div class="modal-body" id="submit_your_commends_content">
@@ -682,7 +684,8 @@ function isMobile(){
   		<div class="modal-dialog">
     		<div class="modal-content">
       		<div class="modal-header bdsharebuttonbox">
-        		<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>打赏作者2元钱</h4>
+        		<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        		<h4 class="modal-title" id="myModalLabel">打赏作者2元钱</h4>
       		</div>
       		
       		<div class="modal-body" id="donate_author_content">
@@ -817,16 +820,17 @@ function isMobile(){
         <p>
         <?php if ($i<6){?>
         <a id="start_step_<?php echo $i+2;?>" class="btn btn-default btn-success" href="#top" role="button"<?php echo $next_step_xml;?>><?php echo $button_title;?></a>
-        <?php }else{
+        <?php }
+        else{
         	if(isMobile()){?>
         	<a id="share_result" class="btn btn-default btn-success" role="button" data-toggle="modal" data-target="#share_your_result">微信分享</a>
         	<?php }else{?>
         	<a id="share_result_by_pc" class="btn btn-default btn-success" role="button" data-toggle="modal" data-target="#share_your_result_by_pc">微信分享</a>
-		<?php }?>
-        <a id="submit_your_commends_button" class="btn btn-default btn-success" role="button" data-toggle="modal" data-target="#submit_your_commends">吐槽作者</a>
-        <a id="donate_author_button" class="btn btn-default btn-success" role="button" data-toggle="modal" data-target="#donate_author">打赏作者</a>
-        <br/>
-        <p></p>
+			<?php }?>
+        	<a id="submit_your_commends_button" class="btn btn-default btn-success" role="button" data-toggle="modal" data-target="#submit_your_commends">吐槽作者</a>
+        	<a id="donate_author_button" class="btn btn-default btn-success" role="button" data-toggle="modal" data-target="#donate_author">打赏作者</a>
+        	<br/>
+        	<p></p>
         
 		<?php }?>
         </p>
@@ -995,7 +999,7 @@ function isMobile(){
       </div>-->
 
 <nav id="step_naver" class="navbar navbar-default navbar-fixed-bottom" role="navigation">
-   <div style="text-align: center; padding-top:6px; padding-bottom:12px; height:60px;">
+   <div style="text-align: center; padding-top:6px; padding-bottom:6px; height:40px;">
    		<button class="btn btn-primary btn-default" data-toggle="modal" data-target="#cube_formula_demo">公式图例</button>
    		<button class="btn btn-primary btn-default" data-toggle="modal" data-target="#step_skills">本步骤技巧</button>
    </div>
@@ -1003,14 +1007,15 @@ function isMobile(){
 
 
       <div class="footer">
+      	<div id="footer_content">
         <p>&copy; Copyright 风流沙驼,  Email: <a href="mailto:flst@qq.com">flst@qq.com</a>  访问主站：<a href="http://www.rubiksdiy.com/">http://www.rubiksdiy.com/</a><div>
 		 <script type="text/javascript">
 var _bdhmProtocol = (("https:" == document.location.protocol) ? " https://" : " http://");
 document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3Fc20edab51389fc339f0b8d2c2eca7702' type='text/javascript'%3E%3C/script%3E"));
 </script>
         </p>
-      
-      </div>
+      	</div>
+      </div> <!-- /footer_content -->
 
     </div> <!-- /container -->
 
@@ -1019,10 +1024,7 @@ document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3
     <script src="js/jquery.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
     <script src="js/ie-emulation-modes-warning.js"></script>
-    <script src="js/cube.js"></script>
-
-   
-
+    <script src="js/cube.js"></script
 
   </body>
   </html>
