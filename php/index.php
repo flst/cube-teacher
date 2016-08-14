@@ -70,14 +70,10 @@ function isMobile(){
           <li role="presentation" class="active"><a href="#" onclick="location.reload()">重来</a></li>
         </ul>
         <h3 class="text-muted">魔方复原助手</h3>
-
       </div>
 		<?php 
 			if(!isMobile()){
-
-
-
-			echo '<div class="bdsharebuttonbox"><a href="#" class="bds_more" data-cmd="more"></a><a href="#" class="bds_qzone" data-cmd="qzone" title="分享到QQ空间"></a><a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a><a href="#" class="bds_tqq" data-cmd="tqq" title="分享到腾讯微博"></a><a href="#" class="bds_renren" data-cmd="renren" title="分享到人人网"></a><a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a></div>';
+			echo '<div class="bdsharebuttonbox"><a href="#" class="bds_more" data-cmd="more">分享：</a><a href="#" class="bds_qzone" data-cmd="qzone" title="分享到QQ空间"></a><a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a><a href="#" class="bds_tqq" data-cmd="tqq" title="分享到腾讯微博"></a><a href="#" class="bds_renren" data-cmd="renren" title="分享到人人网"></a><a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a></div>';
 			}
 
 		?>
@@ -655,6 +651,55 @@ function isMobile(){
   		</div>
 	</div>
 
+	<div class="modal fade" id="submit_your_commends" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  		<div class="modal-dialog">
+    		<div class="modal-content">
+      		<div class="modal-header bdsharebuttonbox">
+        		<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>给软件作者提建议</h4>
+      		</div>
+      		
+      		<div class="modal-body" id="submit_your_commends_content">
+
+        		<p>昵称：<input id="nickname" type="input"></input></p>
+        		<br/>
+       			<p>邮箱：<input id="email" type="input"></input></p>
+       			<br/>
+       			<p>建议：</p>
+        		<p><textarea id="feedback_text" style="width:100%" rows="3"></textarea></p>
+        		<p><a id="submit_feedback" class="btn btn-default btn-success" role="button">提交建议</a></p>        
+        		<p>也可以直接给我发送电子邮件：flst@qq.com ，我会尽快回复和尽力改进</p>
+        			
+      		</div>
+
+      		<div class="modal-footer">
+        		<button type="button" class="btn btn-default" data-dismiss="modal">关闭<span class='hint'>魔方教程</span></button>
+      		</div>
+    		</div>
+  		</div>
+	</div>
+
+	<div class="modal fade" id="donate_author" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  		<div class="modal-dialog">
+    		<div class="modal-content">
+      		<div class="modal-header bdsharebuttonbox">
+        		<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>打赏作者2元钱</h4>
+      		</div>
+      		
+      		<div class="modal-body" id="donate_author_content">
+
+        		<p>如果您在用电脑：直接用手机微信扫一扫二维码</p>
+        		<p>如果您在用手机：可以长按图片并保存图片到相册，再用微信扫一扫功能，打开相册识别</p>      
+        		<p><img src="img/pay2.jpg" width="300"></p>
+        			
+      		</div>
+
+      		<div class="modal-footer">
+        		<button type="button" class="btn btn-default" data-dismiss="modal">关闭<span class='hint'>魔方教程</span></button>
+      		</div>
+    		</div>
+  		</div>
+	</div>
+
 	<div class="modal fade" id="step_skills" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
   		<div class="modal-dialog">
     		<div class="modal-content">
@@ -729,7 +774,7 @@ function isMobile(){
 	$end_title[] = "第4步也完成，这步有点简单，是不？！<span class='hint'>魔方教程</span>";
 	$end_title[] = "完成第5步，胜利更近一步！<span class='hint'>魔方教程</span>";
 	$end_title[] = "第6步搞定，加油！还有最后一步！<span class='hint'>魔方教程</span>";
-	$end_title[] = "恭喜你学会了用层先法复原魔方！后续练习，可以慢慢牢记‘复原公式’哟，记得帮忙分享到朋友圈哟<span class='hint'>魔方教程</span>";
+	$end_title[] = "恭喜你学会了用层先法复原魔方！后续练习，可以慢慢牢记‘复原公式’<span class='hint'>魔方教程</span>";
 
 
 	$button_title = "";
@@ -774,20 +819,15 @@ function isMobile(){
         <a id="start_step_<?php echo $i+2;?>" class="btn btn-default btn-success" href="#top" role="button"<?php echo $next_step_xml;?>><?php echo $button_title;?></a>
         <?php }else{
         	if(isMobile()){?>
-        	<a id="share_result" class="btn btn-default btn-success" role="button" data-toggle="modal" data-target="#share_your_result">分享给微信好友</a>
+        	<a id="share_result" class="btn btn-default btn-success" role="button" data-toggle="modal" data-target="#share_your_result">微信分享</a>
         	<?php }else{?>
-        	<a id="share_result_by_pc" class="btn btn-default btn-success" role="button" data-toggle="modal" data-target="#share_your_result_by_pc">分享给微信好友</a>
+        	<a id="share_result_by_pc" class="btn btn-default btn-success" role="button" data-toggle="modal" data-target="#share_your_result_by_pc">微信分享</a>
 		<?php }?>
-		<br/>
-		<br/>
-        <p><h3>给软件作者提建议</h3></p>
-
-        <p>昵称：<input id="nickname" type="input"></input>&nbsp;&nbsp;邮箱：<input id="email" type="input"></input></p>
+        <a id="submit_your_commends_button" class="btn btn-default btn-success" role="button" data-toggle="modal" data-target="#submit_your_commends">吐槽作者</a>
+        <a id="donate_author_button" class="btn btn-default btn-success" role="button" data-toggle="modal" data-target="#donate_author">打赏作者</a>
         <br/>
-        <p><textarea id="feedback_text" style="width:100%" rows="3"></textarea></p>
-        <p><a id="submit_feedback" class="btn btn-default btn-success" role="button">提交建议</a></p>
-        <br/>
-        <p>也可以直接给我发送电子邮件：flst@qq.com ，我会尽力改进</p>
+        <p></p>
+        
 		<?php }?>
         </p>
         
