@@ -1005,7 +1005,6 @@ function isMobile(){
    </div>
 </nav>
 
-
       <div class="footer">
       	<div id="footer_content">
         <p>&copy; Copyright 风流沙驼,  Email: <a href="mailto:flst@qq.com">flst@qq.com</a>  访问主站：<a href="http://www.rubiksdiy.com/">http://www.rubiksdiy.com/</a><div>
